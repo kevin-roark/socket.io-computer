@@ -1,0 +1,25 @@
+{
+  "name": "socket.io-computer",
+  "version": "0.0.0",
+  "description": "Uses socket.io to do virtual machine usage from browser",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevin-roark/socket.io-computer.git"
+  },
+  "author": "Kevin Roark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kevin-roark/socket.io-computer/issues"
+  },
+  "homepage": "https://github.com/kevin-roark/socket.io-computer",
+  "dependencies": {
+    "socket.io": "~1.0.0-pre",
+    "socket.io-client": "~1.0.0-pre",
+    "jquery": "~2.1.0",
+    "express": "~4.0.0"
+  }
+}

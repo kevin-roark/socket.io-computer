@@ -1,0 +1,16 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+}
+
+#xp-window {
+  width: 60%;
+  height: 60%;
+  margin: 20px;
+  border: 10px solid black;
+}
