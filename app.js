@@ -4,6 +4,8 @@ var mustache = require('mustache-express');
 var express = require('express');
 var app = express();
 
+var redis = require('./redis').web();
+
 var port = 3000;
 
 process.title = 'socket.io-computer';
