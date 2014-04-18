@@ -3,7 +3,7 @@ var Emitter = require('events').EventEmitter;
 var sys = require('sys');
 var fs = require('fs');
 var exec = require('child_process').exec;
-var spawn = rquire('child_process').spawn;
+var spawn = require('child_process').spawn;
 
 var displayNum = process.env.COMPUTER_DISPLAY || '0';
 var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1:5900';
@@ -76,7 +76,7 @@ Computer.prototype.run = function() {
   function frame() {
     exec(command, function(error, stdout, stderr) {
       if (error) {
-        console.log('frame error'); return;
+        console.log(stderr); return;
       }
       fs.readFile(SS_NAME, function(err, buf) {
         if (err) {
