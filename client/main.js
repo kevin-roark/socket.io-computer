@@ -16,7 +16,13 @@ xp.keyup(function(ev) {
 });
 
 xp.mousemove(function(ev) {
+  var delta = keymap.mousemove(ev.clientX, ev.clientY);
+  io.emit('mousemove', delta);
+});
 
+xp.click(function(ev) {
+  var state = keymap.mouseclick(ev.clientX, ev.clientY);
+  io.emit('mouseclick', state);
 });
 
 var image = $('#xp-window img');

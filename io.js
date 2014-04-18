@@ -36,7 +36,14 @@ io.on('connection', function(socket){
 
   // send mouse move to emulator
   socket.on('mousemove', function(move) {
-    /* fill later */
+    console.log('mouse moved');
+    redis.publish('computer:mousemove', move);
+  });
+
+  // mouse click to emulator
+  socket.on('mouseclick', function(state) {
+    console.log('mouse clicked');
+    redis.publish('computer:click', state);
   });
 });
 

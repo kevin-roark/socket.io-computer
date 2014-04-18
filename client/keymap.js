@@ -3,6 +3,9 @@ var shifting = module.exports.shifting = false;
 var ctrling = module.exports.ctrling = false;
 var alting = module.exports.alting = false;
 
+var lastx = module.exports.lastx = 0;
+var lasty = module.exports.lasty = 0;
+
 // maps javascript keycodes to qemu key names
 var keymap = module.exports.keymap = {
     8: 'backspace'
@@ -123,4 +126,20 @@ module.exports.keyup = function(keycode) {
   } else if (keycode == 18) {
     alting = false;
   }
+}
+
+// takes clientX and clientY from mouse, updates mouse position, and returns delta
+module.exports.mousemove = function(x, y) {
+  var dx = lastx - x;
+  var dy = lasty - y;
+
+  lastx = x;
+  lasty = y;
+
+  return {dx: dx, dy: dy};
+}
+
+// takes a mouse click at position x and returns qemu state of mouse
+module.exports.mouseclick = function(x, y) {
+  return '1';
 }
