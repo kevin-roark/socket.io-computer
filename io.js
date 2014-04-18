@@ -30,6 +30,7 @@ io.on('connection', function(socket){
 
   // send keypress to emulator
   socket.on('keydown', function(key){
+    console.log('got a keydown: ' + key);
     redis.publish('computer:keydown', key);
   });
 

@@ -3,6 +3,11 @@ socket.io-computer
 
 a collaborative virtual machine
 
+## External dependencies
+  * qemu
+  * vnc snapshot
+
+
 ## Creating an image
 qemu-img create -f qcow2 winxp.img 3G
 
