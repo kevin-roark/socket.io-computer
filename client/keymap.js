@@ -107,7 +107,7 @@ module.exports.qemukey = function(keycode) {
     alting = true; return null;
   }
 
-  var mapping = keymap(keycode);
+  var mapping = keymap[keycode];
   if (!mapping) return null;
 
   var prefix = '';

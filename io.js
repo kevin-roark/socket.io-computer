@@ -10,7 +10,7 @@ console.log('listening on *:' + port);
 
 // redis socket.io adapter
 var uri = require('redis').uri;
-io.adapter(require('socket.io-redis')(uri), {key: 'xpemu'});
+io.adapter(require('socket.io-redis')(uri, {key: 'xpemu'}));
 
 // redis queries instance
 var redis = require('./redis').io();

@@ -49,7 +49,6 @@ function load(){
   });
 
   emu.on('frame', function(frame) {
-    console.log('emitting frame via io.emit');
     io.emit('frame', frame);
     redis.set('computer:frame', frame);
   });

@@ -70,11 +70,11 @@ Computer.prototype.init = function(img, iso) {
 
 Computer.prototype.run = function() {
   var self = this;
-  var command = 'vncsnapshot ' + hostName + ':' + displayNum + ' ' + SS_NAME;
+  var command = 'vncsnapshot -quality 50 ' + hostName + ':' + displayNum + ' ' + SS_NAME;
 
   this.loop = setInterval(function() {
     frame();
-  }, 30);
+  }, 80);
 
   function frame() {
     exec(command, function(error, stdout, stderr) {

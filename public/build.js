@@ -127,7 +127,7 @@ module.exports.qemukey = function(keycode) {
     alting = true; return null;
   }
 
-  var mapping = keymap(keycode);
+  var mapping = keymap[keycode];
   if (!mapping) return null;
 
   var prefix = '';
@@ -171,23 +171,24 @@ var io = require('socket.io-client')(config.io);
 var keymap = require('./keymap');
 var blobToImage = require('./blob');
 
-var xp = $('#xp-window');
+var xp = $('.xp-image');
 
-xp.keydown(function(ev) {
+$(document).keydown(function(ev) {
   var qemuKey = keymap.qemukey(ev.keyCode);
+  console.log(qemuKey);
   io.emit('keydown', qemuKey);
 });
 
-xp.keyup(function(ev) {
+$(document).keyup(function(ev) {
   keymap.keyup(ev.keyCode);
 });
 
-xp.mousemove(function(ev) {
+$(document).mousemove(function(ev) {
   var delta = keymap.mousemove(ev.clientX, ev.clientY);
   io.emit('mousemove', delta);
 });
 
-xp.click(function(ev) {
+$(document).click(function(ev) {
   var state = keymap.mouseclick(ev.clientX, ev.clientY);
   io.emit('mouseclick', state);
 });
@@ -195,13 +196,15 @@ xp.click(function(ev) {
 var image = $('#xp-window img');
 var lastImage;
 io.on('frame', function(frame) {
-  console.log('got a frame');
-  if (lastImage && 'undefined' != typeof URL) {
-    URL.revokeObjectURL(lastImage);
-  }
+  var src = blobToImage(frame);
+  if (src) {
+    if (lastImage && 'undefined' != typeof URL) {
+      URL.revokeObjectURL(lastImage);
+    }
 
-  image.attr('src', blobToImage(frame));
-  lastImage = image.attr('src');
+    image.attr('src', blobToImage(frame));
+    lastImage = image.attr('src');
+  }
 });
 
 },{"./blob":1,"./keymap":2,"jquery":8,"socket.io-client":9}],4:[function(require,module,exports){
