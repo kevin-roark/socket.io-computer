@@ -15,7 +15,7 @@ io.adapter(require('socket.io-redis')(uri));
 // redis queries instance
 var redis = require('./redis').io();
 
-var uid = process.env.WEPLAY_SERVER_UID || port;
+var uid = process.env.COMPUTER_IO_SERVER_UID || port;
 debug('server uid %s', uid);
 
 io.total = 0;
