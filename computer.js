@@ -6,7 +6,7 @@ var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
 
 var displayNum = process.env.COMPUTER_DISPLAY || '0';
-var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1:5900';
+var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1';
 var SS_NAME = 'ss.jpg';
 
 module.exports = Computer;
@@ -71,7 +71,10 @@ Computer.prototype.init = function(img, iso) {
 Computer.prototype.run = function() {
   var self = this;
   var command = 'vncsnapshot ' + hostName + ':' + displayNum + ' ' + SS_NAME;
-  frame();
+
+  this.loop = setInterval(function() {
+    frame();
+  }, 30);
 
   function frame() {
     exec(command, function(error, stdout, stderr) {
@@ -83,7 +86,6 @@ Computer.prototype.run = function() {
           console.log('readfile error'); return;
         }
         self.emit('frame', buf);
-        setTimeout(frame, 30);
       });
     });
   }

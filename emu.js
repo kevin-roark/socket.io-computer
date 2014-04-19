@@ -21,7 +21,7 @@ process.title = 'socket.io-computer-emulator';
 // redis
 var redis = require('./redis').emu();
 var sub = require('./redis').emu();
-var io = require('socket.io-emitter')(redis);
+var io = require('socket.io-emitter')(redis, {key: 'xpemu'});
 
 // iso
 var iso = process.env.COMPUTER_ISO;
@@ -49,6 +49,7 @@ function load(){
   });
 
   emu.on('frame', function(frame) {
+    console.log('emitting frame via io.emit');
     io.emit('frame', frame);
     redis.set('computer:frame', frame);
   });

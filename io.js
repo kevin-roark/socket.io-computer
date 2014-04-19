@@ -4,13 +4,13 @@ var debug = require('debug');
 
 process.title = 'socket.io-computer-io';
 
-var port = process.env.COMPUTER_IO_PORT || 5001;
+var port = process.env.COMPUTER_IO_PORT || 6001;
 var io = module.exports = sio(port);
 console.log('listening on *:' + port);
 
 // redis socket.io adapter
 var uri = require('redis').uri;
-io.adapter(require('socket.io-redis')(uri));
+io.adapter(require('socket.io-redis')(uri), {key: 'xpemu'});
 
 // redis queries instance
 var redis = require('./redis').io();
@@ -21,12 +21,6 @@ debug('server uid %s', uid);
 io.total = 0;
 io.on('connection', function(socket){
   var req = socket.request;
-
-  // keep track of connected clients
-  updateCount(++io.total);
-  socket.on('disconnect', function(){
-    updateCount(--io.total);
-  });
 
   // send keypress to emulator
   socket.on('keydown', function(key){
@@ -45,6 +39,7 @@ io.on('connection', function(socket){
     console.log('mouse clicked');
     redis.publish('computer:click', state);
   });
+
 });
 
 // socket broadcast shortcut

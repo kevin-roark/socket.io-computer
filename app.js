@@ -29,7 +29,7 @@ app.use(function(req, res, next){
   next();
 });
 
-var url = process.env.COMPUTER_IO_URL || 'http://localhost:3001';
+var url = process.env.COMPUTER_IO_URL || 'http://localhost:6001';
 app.get('/', function(req, res, next){
   res.render('index.mustache', {
     //img: image.toString('base64'),

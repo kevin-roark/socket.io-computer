@@ -26,6 +26,7 @@
     "socket.io-emitter": "0.1.0",
     "blob": "0.0.4",
     "browserify-middleware": "2.5.0",
-    "mustache-express": "1.0.1"
+    "mustache-express": "1.0.1",
+    "debug": "^0.8.0"
   }
 }
