@@ -4,7 +4,7 @@ var debug = require('debug');
 
 process.title = 'socket.io-computer-io';
 
-var port = process.env.COMPUTER_IO_PORT || 3001;
+var port = process.env.COMPUTER_IO_PORT || 5001;
 var io = module.exports = sio(port);
 console.log('listening on *:' + port);
 

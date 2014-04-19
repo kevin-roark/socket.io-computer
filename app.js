@@ -6,7 +6,7 @@ var app = express();
 
 var redis = require('./redis').web();
 
-var port = 3000;
+var port = process.env.COMPUTER_IO_WEB_PORT || 5000;
 
 process.title = 'socket.io-computer';
 

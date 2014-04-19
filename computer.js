@@ -7,7 +7,7 @@ var spawn = require('child_process').spawn;
 
 var displayNum = process.env.COMPUTER_DISPLAY || '0';
 var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1:5900';
-var SS_NAME = 'ss.png';
+var SS_NAME = 'ss.jpg';
 
 module.exports = Computer;
 
