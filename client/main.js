@@ -22,8 +22,8 @@ $(document).mousemove(function(ev) {
   io.emit('mousemove', delta);
 });
 
-$(document).click(function(ev) {
-  var state = keymap.mouseclick(ev.clientX, ev.clientY);
+$(document).mousedown(function(ev) {
+  var state = keymap.mouseclick(ev);
   io.emit('mouseclick', state);
 });
 

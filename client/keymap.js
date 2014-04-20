@@ -139,7 +139,12 @@ module.exports.mousemove = function(x, y) {
   return {dx: dx, dy: dy};
 }
 
-// takes a mouse click at position x and returns qemu state of mouse
-module.exports.mouseclick = function(x, y) {
-  return '1';
+// takes a mouse click event and returns qemu state of mouse
+module.exports.mouseclick = function(ev) {
+  switch (ev.which) {
+    case 1: return '1';
+    case 2: return '2';
+    case 3: return '4';
+    default: return '1';
+  }
 }
