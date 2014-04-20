@@ -5,9 +5,9 @@ var rfb = require('rfb2');
 module.exports = VNC;
 
 function VNC(host, port) {
-  var width = 200;
-  var height = 150;
-  this.canvas = new Canvas(width, height);
+  this.width = 0;
+  this.height = 0;
+  this.canvas = null; //new Canvas(width, height);
   try {
     this.r = rfb.createConnection({
       host: host,
@@ -16,7 +16,7 @@ function VNC(host, port) {
   } catch(e) {
     throw new Error('cannot vnc connect');
   }
-  
+
   var self = this;
 
   self.r.on('connect', function() {
@@ -24,11 +24,14 @@ function VNC(host, port) {
     self.r.on('rect', function(rect) {
       // got a frame
       self.rect = rect;
+      self.width = rect.width;
+      self.height = rect.height;
     });
   });
 }
 
 function drawRect(ctx, rect) {
+  ctx.clearRect(0, 0, rect.width, rect.height);
   if (rect.encoding == rfb.encodings.raw) {
     var id = ctx.createImageData(rect.width, rect.height);
     for (var i=0;i< id.data.length; i+=4) {
@@ -45,8 +48,15 @@ function drawRect(ctx, rect) {
 
 VNC.prototype.getFrame = function(callback) {
   if(!this.rect) {
-    callback(null);
-    return;
+    callback(null); return;
+  }
+
+  if (!this.canvas) {
+    if (this.width && this.height) {
+      this.canvas = new Canvas(this.width, this.height);
+    } else {
+      callback(null); return;
+    }
   }
 
   drawRect(this.canvas.getContext('2d'), this.rect);
