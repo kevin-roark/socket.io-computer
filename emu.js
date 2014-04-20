@@ -53,9 +53,12 @@ function load(){
     redis.set('computer:frame', frame);
   });
 
+  console.log('init emu');
   emu.init(img, iso);
-  emu.run();
-  save();
+  setTimeout(function() {
+    console.log('run emu');
+    emu.run();
+  }, 2000);
 
   function save() {
     if (saveInterval) {

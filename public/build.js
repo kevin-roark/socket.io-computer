@@ -8,10 +8,10 @@ module.exports = blobToImage;
 
 function blobToImage(imageData) {
   if (Blob && 'undefined' != typeof URL) {
-    var blob = new Blob([imageData], {type: 'image/jpg'});
+    var blob = new Blob([imageData], {type: 'image/png'});
     return URL.createObjectURL(blob);
   } else if (imageData.base64) {
-    return 'data:image/jpg;base64,' + imageData.data;
+    return 'data:image/png;base64,' + imageData.data;
   } else {
     return 'about:blank';
   }
@@ -150,7 +150,7 @@ module.exports.keyup = function(keycode) {
 
 // takes clientX and clientY from mouse, updates mouse position, and returns delta
 module.exports.mousemove = function(x, y) {
-  var dx = x -lastx; 
+  var dx = x - lastx;
   var dy = y - lasty;
 
   lastx = x;
@@ -186,7 +186,6 @@ $(document).keyup(function(ev) {
 
 $(document).mousemove(function(ev) {
   var delta = keymap.mousemove(ev.clientX, ev.clientY);
-  console.log(delta);
   io.emit('mousemove', delta);
 });
 

@@ -7,7 +7,7 @@ var spawn = require('child_process').spawn;
 var VNC = require('./vnc');
 
 var displayNum = process.env.COMPUTER_DISPLAY || '0';
-var port = (5900 + parseInt(displayNum)) + '';
+var port = 5900 + parseInt(displayNum);
 var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1';
 var SS_NAME = 'ss.jpg';
 
@@ -25,32 +25,13 @@ function onQemuData(computer, data) {
 }
 
 function onQemuClose(computer, code) {
-  console.log('close code: ' + code);
-}
-
-function onXvfbData(computer, data) {
-  console.log('x data: ' + data);
-}
-
-function onXvfbClose(computer, code) {
-  console.log('x close code: ' + code);
+  console.log('qemu closed with code: ' + code);
 }
 
 Computer.prototype.init = function(img, iso) {
   this.img = img;
   this.iso = iso;
   var self = this;
-
-  /*
-  var xcom = 'Xvfb';
-  var xargs = [':' + displayNum];
-  this.xvfb = spawn(xcom, xargs);
-  this.xvfb.on('data', function(data) {
-    onXvfbData(self, data);
-  });
-  this.xvfb.on('close', function(code) {
-    onXvfbClose(self, code);
-  });*/
 
   var command = 'qemu-system-x86_64';
   var args = [
@@ -73,15 +54,23 @@ Computer.prototype.init = function(img, iso) {
 Computer.prototype.run = function() {
   var self = this;
 
-  this.vnc = new VNC(hostName, port);
+  try {
+    this.vnc = new VNC(hostName, port);
+  } catch(e) {
+    console.log('connection error');
+    setTimeout(self.run, 100);
+    return;
+  }
 
   this.loop = setInterval(function() {
     frame();
-  }, 80);
+  }, 100);
 
   function frame() {
-    this.vnc.getFrame(function(buf) {
-      self.emit('frame', buf);
+    self.vnc.getFrame(function(buf) {
+      if (buf) {
+        self.emit('frame', buf);
+      } 
     });
   }
 
