@@ -130,8 +130,8 @@ module.exports.keyup = function(keycode) {
 
 // takes clientX and clientY from mouse, updates mouse position, and returns delta
 module.exports.mousemove = function(x, y) {
-  var dx = lastx - x;
-  var dy = lasty - y;
+  var dx = x - lastx;
+  var dy = y - lasty;
 
   lastx = x;
   lasty = y;

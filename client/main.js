@@ -9,7 +9,8 @@ var xp = $('.xp-image');
 $(document).keydown(function(ev) {
   var qemuKey = keymap.qemukey(ev.keyCode);
   console.log(qemuKey);
-  io.emit('keydown', qemuKey);
+  if(qemuKey)
+    io.emit('keydown', qemuKey);
 });
 
 $(document).keyup(function(ev) {

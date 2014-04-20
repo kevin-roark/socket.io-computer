@@ -73,7 +73,10 @@ sub.on('message', function(channel, data) {
   if ('computer:keydown' == channel) {
     emu.key(data.toString()); // data is a key for send_press
   } else if ('computer:mousemove' == channel) {
-    emu.mouse(data.dx, data.dy); // data is delta x and delta y for mouse_move
+    var split = data.toString().split(':');
+    var dx = split[0];
+    var dy = split[1];
+    emu.mouse(dx, dy); // data is delta x and delta y for mouse_move
   } else if ('computer:click' == channel) {
     emu.click(data.toString()); // data is mouse pressed code for mouse_button
   }

@@ -150,8 +150,8 @@ module.exports.keyup = function(keycode) {
 
 // takes clientX and clientY from mouse, updates mouse position, and returns delta
 module.exports.mousemove = function(x, y) {
-  var dx = lastx - x;
-  var dy = lasty - y;
+  var dx = x -lastx; 
+  var dy = y - lasty;
 
   lastx = x;
   lasty = y;
@@ -176,7 +176,8 @@ var xp = $('.xp-image');
 $(document).keydown(function(ev) {
   var qemuKey = keymap.qemukey(ev.keyCode);
   console.log(qemuKey);
-  io.emit('keydown', qemuKey);
+  if(qemuKey)
+    io.emit('keydown', qemuKey);
 });
 
 $(document).keyup(function(ev) {
@@ -185,6 +186,7 @@ $(document).keyup(function(ev) {
 
 $(document).mousemove(function(ev) {
   var delta = keymap.mousemove(ev.clientX, ev.clientY);
+  console.log(delta);
   io.emit('mousemove', delta);
 });
 
