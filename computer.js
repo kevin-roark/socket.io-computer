@@ -4,8 +4,10 @@ var sys = require('sys');
 var fs = require('fs');
 var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
+var VNC = require('./vnc');
 
 var displayNum = process.env.COMPUTER_DISPLAY || '0';
+var port = (5900 + parseInt(displayNum)) + '';
 var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1';
 var SS_NAME = 'ss.jpg';
 
@@ -70,23 +72,16 @@ Computer.prototype.init = function(img, iso) {
 
 Computer.prototype.run = function() {
   var self = this;
-  var command = 'vncsnapshot -quality 50 ' + hostName + ':' + displayNum + ' ' + SS_NAME;
+
+  this.vnc = new VNC(hostName, port);
 
   this.loop = setInterval(function() {
     frame();
   }, 80);
 
   function frame() {
-    exec(command, function(error, stdout, stderr) {
-      if (error) {
-        console.log(stderr); return;
-      }
-      fs.readFile(SS_NAME, function(err, buf) {
-        if (err) {
-          console.log('readfile error'); return;
-        }
-        self.emit('frame', buf);
-      });
+    this.vnc.getFrame(function(buf) {
+      self.emit('frame', buf);
     });
   }
 
