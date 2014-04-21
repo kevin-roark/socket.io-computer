@@ -70,7 +70,7 @@ Computer.prototype.run = function() {
     self.vnc.getFrame(function(buf) {
       if (buf) {
         self.emit('frame', buf);
-      } 
+      }
     });
   }
 
