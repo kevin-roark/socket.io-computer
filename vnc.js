@@ -58,6 +58,8 @@ function putData(ctx, id, rect) {
 }
 
 VNC.prototype.drawRect = function(rect) {
+  if (!this.canvas) return;
+
   var ctx = this.canvas.getContext('2d');
   if (rect.encoding == rfb.encodings.raw) {
     var id = ctx.createImageData(rect.width, rect.height);
@@ -70,7 +72,8 @@ VNC.prototype.drawRect = function(rect) {
     
     putData(ctx, id, rect);
   } else if (rect.encoding == rfb.encodings.copyRect) {
-    ctx.drawImage(this.canvas, rect.src.x, rect.src.y, rect.width, rect.height, rect.x, rect.y);
+    var can = new Canvas(this.r.width, this.r.height);
+    ctx.drawImage(can, rect.src.x, rect.src.y, rect.src.width, rect.src.height, rect.width, rect.height, rect.x, rect.y);
   }
 }
 

@@ -22,6 +22,15 @@ function resize() {
 }
 resize();
 
+function inRect(rect, ev) {
+  var x = ev.clientX;
+  var y = ev.clientY;
+
+  if (x <= rect.left || x >= rect.right || y <= rect.top || y >= rect.bottom)
+    return false;
+  return true;
+}
+
 $(document).keydown(function(ev) {
   var qemuKey = keymap.qemukey(ev.keyCode);
   console.log(qemuKey);
@@ -34,11 +43,17 @@ $(document).keyup(function(ev) {
 });
 
 $(document).mousemove(function(ev) {
+  var rect = xp.get(0).getBoundingClientRect();
+  if (!inRect(rect, ev)) return;
+
   var delta = keymap.mousemove(ev.clientX, ev.clientY);
   io.emit('mousemove', delta);
 });
 
 $(document).mousedown(function(ev) {
+  var rect = xp.get(0).getBoundingClientRect();
+  if (!inRect(rect, ev)) return;
+
   var state = keymap.mouseclick(ev);
   io.emit('mouseclick', state);
 });

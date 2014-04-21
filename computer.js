@@ -40,7 +40,7 @@ Computer.prototype.init = function(img, iso) {
     '-hda', img,
     '-cdrom', iso,
     '-monitor', 'stdio',
-    '-boot', 'd'
+    '-boot', 'c'
   ];
   this.qemu = spawn(command, args);
   this.qemu.on('data', function(data) {
