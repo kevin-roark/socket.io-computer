@@ -6,6 +6,22 @@ var blobToImage = require('./blob');
 
 var xp = $('.xp-image');
 
+$(document).resize(resize);
+function resize() {
+  var wdiff = $(window).width() - 1200;  
+  if (wdiff > 0) {
+    $('#window-chrome').css('left', wdiff / 2 + 'px');
+    $('#xp-window').css('left', (wdiff / 2 + 300)  +'px');
+  }
+
+  var hdiff = $(window).height() - 720;
+  if (hdiff > 0) {
+    $('#window-chrome').css('top', hdiff / 2 + 'px');
+    $('#xp-window').css('top', (hdiff / 2 + 110) + 'px');
+  }
+}
+resize();
+
 $(document).keydown(function(ev) {
   var qemuKey = keymap.qemukey(ev.keyCode);
   console.log(qemuKey);
