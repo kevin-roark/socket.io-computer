@@ -100,6 +100,7 @@ Computer.prototype.click = function(state) {
   if (!this.running) return this;
 
   var command = 'mouse_button ' + state + '\n';
+  console.log(command);
   this.qemu.stdin.write(command);
 }
 
