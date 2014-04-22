@@ -37,6 +37,8 @@ Computer.prototype.init = function(img, iso) {
   var args = [
     '-m', '512',
     '-vnc', hostName + ':' + displayNum,
+    '-net', 'nic',
+    '-net', 'user',
     '-hda', img,
     '-cdrom', iso,
     '-monitor', 'stdio',
