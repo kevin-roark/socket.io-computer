@@ -33,8 +33,7 @@ resize();
 function inRect(rect, ev) {
   var x = ev.clientX;
   var y = ev.clientY;
-  var p = 0; // padding
-
+  var p = 20; // padding
 
   if (x <= rect.left - p || x >= rect.right + p || y <= rect.top - p || y >= rect.bottom + p)
     return false;
@@ -58,8 +57,9 @@ function checkFocus(ev) {
 function getQemuPos(ev) {
   var rect = xp.get(0).getBoundingClientRect();
 
-  var x = ev.clientX - rect.x;
-  var y = ev.clientY - rect.y;
+  var x = ev.clientX - rect.left;
+  var y = ev.clientY - rect.top;
+
 
   x *= natWidth / imWidth;
   y *= natHeight / imHeight;
