@@ -196,7 +196,7 @@ resize();
 function inRect(rect, ev) {
   var x = ev.clientX;
   var y = ev.clientY;
-  var p = 60; // padding
+  var p = 0; // padding
 
 
   if (x <= rect.left - p || x >= rect.right + p || y <= rect.top - p || y >= rect.bottom + p)
@@ -235,6 +235,8 @@ $(document).keyup(function(ev) {
 });
 
 $(document).mousemove(function(ev) {
+  if (!focused) return;
+
   var rect = xp.get(0).getBoundingClientRect();
   if (!inRect(rect, ev)) {
     return;
