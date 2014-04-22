@@ -6,7 +6,8 @@ html, body {
 body {
   width: 100%;
   height: 100%;
-  background-color: #000;
+  background-color: #fff;
+  font-family: Helvetica, sans-serif;
 }
 
 #window-chrome {
@@ -35,4 +36,32 @@ body {
 
 .focused {
   border-color: red;
+}
+
+.turn-request {
+  position: absolute;
+  top: 360px;
+  text-align: center;
+}
+
+.turn-request-button {
+  cursor: pointer;
+  width: 460px;
+  height: 80px;
+  line-height: 80px;
+  background-color: #eee;
+  border: 1px solid black;
+  color: black;
+  font-size: 3em;
+  font-weight: 100;
+  border-radius: 5px;
+}
+  .turn-request-button:hover, .turn-request-button:focus {
+    border: 1px solid #444;
+    color: #444;
+  }
+
+.turn-request-timer {
+  font-size: 4em;
+  color: red;
 }

@@ -13,19 +13,26 @@ var chHeight = 310;
 var natWidth, natHeight;
 
 var focused = false;
+var waitingForTurn = false;
+var hasTurn = false;
+var TURN_TIME = 15000;
 
-$(document).resize(resize);
+$(window).resize(resize);
 function resize() {
   var wdiff = $(window).width() - chWidth;
   if (wdiff > 0) {
-    $('#window-chrome').css('left', wdiff / 2 + 'px');
-    $('#xp-window').css('left', (wdiff / 2 + 60)  + 'px');
+    var left = wdiff / 2;
+    $('#window-chrome').css('left', left + 'px');
+    $('#xp-window').css('left', (left + 60)  + 'px');
+    $('.turn-request').css('left', (left - 10) + 'px');
   }
 
   var hdiff = $(window).height() - chHeight;
   if (hdiff > 0) {
-    $('#window-chrome').css('top', hdiff / 2 + 'px');
-    $('#xp-window').css('top', (hdiff / 2 + 20) + 'px');
+    var top = hdiff / 3;
+    $('#window-chrome').css('top', top + 'px');
+    $('#xp-window').css('top', (top + 20) + 'px');
+    $('.turn-request').css('top', (top + 20 + chHeight) + 'px');
   }
 }
 resize();
@@ -60,15 +67,47 @@ function getQemuPos(ev) {
   var x = ev.clientX - rect.left;
   var y = ev.clientY - rect.top;
 
-
   x *= natWidth / imWidth;
   y *= natHeight / imHeight;
 
   return {x: x, y: y};
 }
 
+$('.turn-request-button').click(function() {
+  if (hasTurn || waitingForTurn) return;
+
+  $(this).fadeOut();
+
+  waitingForTurn = true;
+  io.emit('turn-request', new Date());
+});
+
+io.on('your-turn', function() {
+  hasTurn = true;
+  waitingForTurn = false;
+  $('.turn-timer').html('YOUR TURN');
+});
+
+io.on('lose-turn', function() {
+  hasTurn = false;
+  $('.turn-request-button').fadeIn();
+});
+
+io.on('turn-ack', function(time) {
+  var int = setInterval(function() {
+    time -= 1000;
+    var seconds = Math.floor(time / 1000);
+    if (seconds <= 0) {
+      clearInterval(int);
+      $('.turn-timer').html('');
+    } else {
+      $('.turn-timer').html('Turn in ' + seconds + ' seconds');
+    }
+  }, 1000);
+});
+
 $(document).keydown(function(ev) {
-  if (!focused) return;
+  if (!focused || !hasTurn) return;
 
   ev.preventDefault();
   var qemuKey = keymap.qemukey(ev.keyCode);
@@ -79,14 +118,14 @@ $(document).keydown(function(ev) {
 });
 
 $(document).keyup(function(ev) {
-  if (!focused) return;
+  if (!focused || !hasTurn) return;
 
   ev.preventDefault();
   keymap.keyup(ev.keyCode);
 });
 
 $(document).mousemove(function(ev) {
-  if (!focused) return;
+  if (!focused || !hasTurn) return;
 
   var rect = xp.get(0).getBoundingClientRect();
   if (!inRect(rect, ev)) {
@@ -102,7 +141,10 @@ $(document).mousemove(function(ev) {
 });
 
 $(document).mousedown(function(ev) {
+  if (!hasTurn) return;
   if (!checkFocus(ev)) return;
+
+  ev.preventDefault();
 
   // start a click
   var state = keymap.mouseclick(ev);
@@ -110,7 +152,9 @@ $(document).mousedown(function(ev) {
 });
 
 $(document).mouseup(function(ev) {
-  if (!focused) return;
+  if (!focused || !hasTurn) return;
+
+  ev.preventDefault();
 
   // click is finished
   io.emit('mouseclick', keymap.blankState);
