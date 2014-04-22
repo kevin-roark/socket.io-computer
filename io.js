@@ -24,7 +24,7 @@ var turnQueue = [];
 var activeTurn = false;
 
 function checkQueue(newReq) {
-  if (!activeTurn) {
+  if (!activeTurn && turnQueue.length >= 1) {
     activeTurn = true;
     var sock = turnQueue.shift();
     sock.emit('your-turn');
@@ -34,7 +34,7 @@ function checkQueue(newReq) {
       checkQueue(false);
     }, TURN_TIME);
   } else if (newReq) {
-    var time = queue.length * TURN_TIME;
+    var time = turnQueue.length * TURN_TIME;
     var sock = turnQueue[turnQueue.length - 1];
     sock.emit('turn-ack', time);
   }

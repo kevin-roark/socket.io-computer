@@ -61,7 +61,8 @@ body {
     color: #444;
   }
 
-.turn-request-timer {
+.turn-timer {
   font-size: 4em;
   color: red;
+  margin-left: 20px;
 }
