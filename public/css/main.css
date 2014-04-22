@@ -31,7 +31,7 @@ body {
 .xp-image {
   width: 320px;
   height: 240px;
-  border: 2px solid transparent;
+  border: 4px solid transparent;
 }
 
 .focused {

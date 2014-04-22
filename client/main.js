@@ -24,7 +24,7 @@ function resize() {
     var left = wdiff / 2;
     $('#window-chrome').css('left', left + 'px');
     $('#xp-window').css('left', (left + 60)  + 'px');
-    $('.turn-timer').css('left', (left + 10) + 'px');
+    $('.turn-timer').css('left', (left + 50) + 'px');
   }
 
   var hdiff = $(window).height() - chHeight;
@@ -40,7 +40,7 @@ resize();
 function inRect(rect, ev) {
   var x = ev.clientX;
   var y = ev.clientY;
-  var p = 20; // padding
+  var p = 175; // padding
 
   if (x <= rect.left - p || x >= rect.right + p || y <= rect.top - p || y >= rect.bottom + p)
     return false;
@@ -55,6 +55,7 @@ function checkFocus(ev) {
       waitingForTurn = true;
       io.emit('turn-request', new Date());
       xp.addClass('waiting');
+      return focused;
     }
 
     focused =  true;
@@ -159,8 +160,9 @@ $(document).mousemove(function(ev) {
 });
 
 $(document).mousedown(function(ev) {
-  if (!hasTurn) return;
   if (!checkFocus(ev)) return;
+
+  console.log(ev);
 
   ev.preventDefault();
 
@@ -179,6 +181,10 @@ $(document).mouseup(function(ev) {
 });
 
 var image = $('#xp-window img');
+image.bind('contextmenu', function(e) {
+  return false;
+}); 
+
 var lastImage;
 io.on('frame', function(frame) {
   var src = blobToImage(frame);
