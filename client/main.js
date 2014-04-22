@@ -5,19 +5,25 @@ var keymap = require('./keymap');
 var blobToImage = require('./blob');
 
 var xp = $('.xp-image');
+var imWidth = 320;
+var imHeight = 240;
+var chWidth = 442;
+var chHeight = 310;
+
+var focused = false;
 
 $(document).resize(resize);
 function resize() {
-  var wdiff = $(window).width() - 1200;  
+  var wdiff = $(window).width() - chWidth;
   if (wdiff > 0) {
     $('#window-chrome').css('left', wdiff / 2 + 'px');
-    $('#xp-window').css('left', (wdiff / 2 + 300)  +'px');
+    $('#xp-window').css('left', (wdiff / 2 + 60)  + 'px');
   }
 
-  var hdiff = $(window).height() - 720;
+  var hdiff = $(window).height() - chHeight;
   if (hdiff > 0) {
     $('#window-chrome').css('top', hdiff / 2 + 'px');
-    $('#xp-window').css('top', (hdiff / 2 + 110) + 'px');
+    $('#xp-window').css('top', (hdiff / 2 + 20) + 'px');
   }
 }
 resize();
@@ -33,7 +39,21 @@ function inRect(rect, ev) {
   return true;
 }
 
+function checkFocus(ev) {
+  var rect = xp.get(0).getBoundingClientRect();
+  if (!focused && inRect(rect, ev)) {
+    focused =  true;
+    xp.addClass('focused');
+  } else if (focused && !inRect(rect, ev)) {
+    focused = false;
+    xp.removeClass('focused');
+  }
+  return focused;
+}
+
 $(document).keydown(function(ev) {
+  if (!focused) return;
+
   ev.preventDefault();
   var qemuKey = keymap.qemukey(ev.keyCode);
   console.log(qemuKey);
@@ -42,6 +62,8 @@ $(document).keydown(function(ev) {
 });
 
 $(document).keyup(function(ev) {
+  if (!focused) return;
+
   ev.preventDefault();
   keymap.keyup(ev.keyCode);
 });
@@ -58,13 +80,18 @@ $(document).mousemove(function(ev) {
 });
 
 $(document).mousedown(function(ev) {
+  if (!checkFocus(ev)) return;
+
+  // start a click
   var state = keymap.mouseclick(ev);
   io.emit('mouseclick', state);
-  
-  // turn click off after 20 ms (simulate a click)
-  setTimeout(function() {
-    io.emit('mouseclick', keymap.blankState);
-  }, 20);
+});
+
+$(document).mouseup(function(ev) {
+  if (!focused) return;
+
+  // click is finished
+  io.emit('mouseclick', keymap.blankState);
 });
 
 var image = $('#xp-window img');

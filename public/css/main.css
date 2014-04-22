@@ -16,8 +16,8 @@ body {
 }
 
 .chrome-image {
-  height: 720px;
-  width: 1200px;
+  width: 442px;
+  height: 310px;
 }
 
 #xp-window {
@@ -28,6 +28,11 @@ body {
 }
 
 .xp-image {
-  width: 600px;
-  height: 450px;
+  width: 320px;
+  height: 240px;
+  border: 2px solid transparent;
+}
+
+.focused {
+  border-color: red;
 }
