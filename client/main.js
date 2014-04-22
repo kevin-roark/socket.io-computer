@@ -10,6 +10,8 @@ var imHeight = 240;
 var chWidth = 442;
 var chHeight = 310;
 
+var natWidth, natHeight;
+
 var focused = false;
 
 $(document).resize(resize);
@@ -44,11 +46,19 @@ function checkFocus(ev) {
   if (!focused && inRect(rect, ev)) {
     focused =  true;
     xp.addClass('focused');
+    var pos = getQemuPos(ev);
+    io.emit('mousemove', pos);
   } else if (focused && !inRect(rect, ev)) {
     focused = false;
     xp.removeClass('focused');
   }
   return focused;
+}
+
+function getQemuPos(ev) {
+  var x = ev.clientX * natWidth / imWidth;
+  var y = ev.clientY * natHeight / imHeight;
+  return {x: x, y: y};
 }
 
 $(document).keydown(function(ev) {
@@ -77,8 +87,11 @@ $(document).mousemove(function(ev) {
     return;
   }
 
-  var pos = {x: ev.clientX, y: ev.clientY};
+  if (!natWidth || !natHeight) {
+    return;
+  }
 
+  var pos = getQemuPos(ev);
   io.emit('mousemove', pos);
 });
 
@@ -108,5 +121,16 @@ io.on('frame', function(frame) {
 
     image.attr('src', blobToImage(frame));
     lastImage = image.attr('src');
+    getDimensions(image);
   }
 });
+
+function getDimensions(im) {
+  if (!natHeight || !natWidth) {
+    natHeight = im[0].naturalHeight;
+    natWidth = im[0].naturalWidth;
+    setTimeout(function() {
+      getDimensions(im);
+    }, 50);
+  }
+}
