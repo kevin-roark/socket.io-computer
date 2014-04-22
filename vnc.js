@@ -1,8 +1,39 @@
 
 var Canvas = require('canvas');
 var rfb = require('rfb2');
+var exec = require('child_process').exec;
+var fs = require('fs');
+
+var SS_NAME = 'ss.jpg';
 
 module.exports = VNC;
+
+function VNC(host, port) {
+
+  this.host = host;
+  this.port = port;
+  this.displayNum = port - 5900; // vnc convention
+
+  this.command = 'vncsnapshot ' + this.host + ':' + this.displayNum + ' ' + SS_NAME;
+}
+
+VNC.prototype.getFrame = function(callback) {
+   exec(this.command, function(error, stdout, stderr) {
+      if (error) {
+        console.log(stderr); callback(null); return;
+      }
+
+      fs.readFile(SS_NAME, function(err, buf) {
+        if (err) {
+          console.log('readfile error'); callback(null); return;
+        }
+
+        callback(buf);
+      });
+    });
+};
+
+/* Hide all of this for now, I think the drawing on canvas is too slow
 
 function VNC(host, port) {
   try {
@@ -15,7 +46,7 @@ function VNC(host, port) {
   }
 
   var self = this;
-  
+
   self.r.on('connect', function() {
     // connected, woo!
     self.width = self.r.width;
@@ -69,7 +100,7 @@ VNC.prototype.drawRect = function(rect) {
       id.data[i+2] = rect.data[i];
       id.data[i+3] = 255;
     }
-    
+
     putData(ctx, id, rect);
   } else if (rect.encoding == rfb.encodings.copyRect) {
     var can = new Canvas(this.r.width, this.r.height);
@@ -87,3 +118,5 @@ VNC.prototype.getFrame = function(callback) {
     callback(buf);
   });
 };
+
+*/

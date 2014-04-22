@@ -35,7 +35,7 @@ Computer.prototype.init = function(img, iso) {
 
   var command = 'qemu-system-x86_64';
   var args = [
-    '-m', '256',
+    '-m', '512',
     '-vnc', hostName + ':' + displayNum,
     '-hda', img,
     '-cdrom', iso,
