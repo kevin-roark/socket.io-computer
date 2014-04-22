@@ -56,8 +56,14 @@ function checkFocus(ev) {
 }
 
 function getQemuPos(ev) {
-  var x = ev.clientX * natWidth / imWidth;
-  var y = ev.clientY * natHeight / imHeight;
+  var rect = xp.get(0).getBoundingClientRect();
+
+  var x = ev.clientX - rect.x;
+  var y = ev.clientY - rect.y;
+
+  x *= natWidth / imWidth;
+  y *= natHeight / imHeight;
+
   return {x: x, y: y};
 }
 
