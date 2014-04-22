@@ -24,7 +24,7 @@ function resize() {
     var left = wdiff / 2;
     $('#window-chrome').css('left', left + 'px');
     $('#xp-window').css('left', (left + 60)  + 'px');
-    $('.turn-request').css('left', (left - 10) + 'px');
+    $('.turn-timer').css('left', (left + 10) + 'px');
   }
 
   var hdiff = $(window).height() - chHeight;
@@ -32,7 +32,7 @@ function resize() {
     var top = hdiff / 3;
     $('#window-chrome').css('top', top + 'px');
     $('#xp-window').css('top', (top + 20) + 'px');
-    $('.turn-request').css('top', (top + 20 + chHeight) + 'px');
+    $('.turn-timer').css('top', (top + 20 + chHeight) + 'px');
   }
 }
 resize();
@@ -50,6 +50,13 @@ function inRect(rect, ev) {
 function checkFocus(ev) {
   var rect = xp.get(0).getBoundingClientRect();
   if (!focused && inRect(rect, ev)) {
+
+    if(!hasTurn && !waitingForTurn) {
+      waitingForTurn = true;
+      io.emit('turn-request', new Date());
+      xp.addClass('waiting');
+    }
+
     focused =  true;
     xp.addClass('focused');
     var pos = getQemuPos(ev);
@@ -59,6 +66,23 @@ function checkFocus(ev) {
     xp.removeClass('focused');
   }
   return focused;
+}
+
+function giveTurn() {
+  focused =  true;
+  hasTurn = true;
+  waitingForTurn = false;
+  xp.removeClass('waiting');
+  xp.addClass('focused');
+  if (turnInt)
+    clearInterval(turnInt);
+  $('.turn-timer').html('');
+}
+
+function removeTurn() {
+  hasTurn = false;
+  focused = false;
+  xp.removeClass('focused');
 }
 
 function getQemuPos(ev) {
@@ -73,36 +97,16 @@ function getQemuPos(ev) {
   return {x: x, y: y};
 }
 
-$('.turn-request-button').click(function() {
-  if (hasTurn || waitingForTurn) return;
-
-  $(this).fadeOut(function() {
-    waitingForTurn = true;
-    io.emit('turn-request', new Date());
-  });
-
-});
-
 io.on('your-turn', function() {
-  hasTurn = true;
-  waitingForTurn = false;
-  focused = true;
-  xp.addClass('focused');
-  if (turnInt)
-    clearInterval(turnInt);
-  
-  $('.turn-timer').html('YOUR TURN');
+  giveTurn();
 });
 
 io.on('lose-turn', function() {
-  hasTurn = false;
-  focused = false;
-  xp.removeClass('focused');
-  $('.turn-timer').html('');
-  $('.turn-request-button').fadeIn();
+  removeTurn();
 });
 
 io.on('turn-ack', function(time) {
+  var dots = '';
   turnInt = setInterval(function() {
     time -= 1000;
     var seconds = Math.floor(time / 1000);
@@ -110,7 +114,12 @@ io.on('turn-ack', function(time) {
       clearInterval(turnInt);
       $('.turn-timer').html('');
     } else {
-      $('.turn-timer').html('Turn in ~' + seconds + ' seconds');
+      if (dots.length < 3)
+        dots += '.';
+      else
+        dots = '';
+
+      $('.turn-timer').html('Waiting for turn in ~' + seconds + ' seconds' + dots);
     }
   }, 1000);
 });

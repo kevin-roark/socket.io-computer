@@ -35,7 +35,11 @@ body {
 }
 
 .focused {
-  border-color: red;
+  border-color: rgb(30, 30, 255);
+}
+
+.waiting {
+  border-color: rgb(255, 255, 30);
 }
 
 .turn-request {
@@ -62,7 +66,7 @@ body {
   }
 
 .turn-timer {
-  font-size: 4em;
-  color: red;
-  margin-left: 20px;
+  font-size: 13px;
+  color: #999;
+  position: absolute;
 }
