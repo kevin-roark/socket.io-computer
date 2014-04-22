@@ -6,6 +6,8 @@ var alting = module.exports.alting = false;
 var lastx = module.exports.lastx = 0;
 var lasty = module.exports.lasty = 0;
 
+module.exports.blankState = '0'; // when a mouse is not pressed
+
 // maps javascript keycodes to qemu key names
 var keymap = module.exports.keymap = {
     8: 'backspace'
@@ -137,6 +139,11 @@ module.exports.mousemove = function(x, y) {
   lasty = y;
 
   return {dx: dx, dy: dy};
+}
+
+module.exports.updateMouse = function(rect) {
+  lastx = rect.x;
+  lasty = rect.y;
 }
 
 // takes a mouse click event and returns qemu state of mouse

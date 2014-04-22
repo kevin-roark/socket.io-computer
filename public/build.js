@@ -8,10 +8,10 @@ module.exports = blobToImage;
 
 function blobToImage(imageData) {
   if (Blob && 'undefined' != typeof URL) {
-    var blob = new Blob([imageData], {type: 'image/png'});
+    var blob = new Blob([imageData], {type: 'image/jpeg'});
     return URL.createObjectURL(blob);
   } else if (imageData.base64) {
-    return 'data:image/png;base64,' + imageData.data;
+    return 'data:image/jpeg;base64,' + imageData.data;
   } else {
     return 'about:blank';
   }
@@ -25,6 +25,8 @@ var alting = module.exports.alting = false;
 
 var lastx = module.exports.lastx = 0;
 var lasty = module.exports.lasty = 0;
+
+module.exports.blankState = '0'; // when a mouse is not pressed
 
 // maps javascript keycodes to qemu key names
 var keymap = module.exports.keymap = {
@@ -159,6 +161,11 @@ module.exports.mousemove = function(x, y) {
   return {dx: dx, dy: dy};
 }
 
+module.exports.updateMouse = function(rect) {
+  lastx = rect.x;
+  lasty = rect.y;
+}
+
 // takes a mouse click event and returns qemu state of mouse
 module.exports.mouseclick = function(ev) {
   switch (ev.which) {
@@ -197,13 +204,16 @@ resize();
 function inRect(rect, ev) {
   var x = ev.clientX;
   var y = ev.clientY;
+  var p = 60; // padding
 
-  if (x <= rect.left || x >= rect.right || y <= rect.top || y >= rect.bottom)
+
+  if (x <= rect.left - p || x >= rect.right + p || y <= rect.top - p || y >= rect.bottom + p)
     return false;
   return true;
 }
 
 $(document).keydown(function(ev) {
+  ev.preventDefault();
   var qemuKey = keymap.qemukey(ev.keyCode);
   console.log(qemuKey);
   if(qemuKey)
@@ -211,23 +221,29 @@ $(document).keydown(function(ev) {
 });
 
 $(document).keyup(function(ev) {
+  ev.preventDefault();
   keymap.keyup(ev.keyCode);
 });
 
 $(document).mousemove(function(ev) {
   var rect = xp.get(0).getBoundingClientRect();
-  if (!inRect(rect, ev)) return;
+  if (!inRect(rect, ev)) {
+    keymap.updateMouse(rect);
+    return;
+  }
 
   var delta = keymap.mousemove(ev.clientX, ev.clientY);
   io.emit('mousemove', delta);
 });
 
 $(document).mousedown(function(ev) {
-  var rect = xp.get(0).getBoundingClientRect();
-  if (!inRect(rect, ev)) return;
-
   var state = keymap.mouseclick(ev);
   io.emit('mouseclick', state);
+  
+  // turn click off after 20 ms (simulate a click)
+  setTimeout(function() {
+    io.emit('mouseclick', keymap.blankState);
+  }, 20);
 });
 
 var image = $('#xp-window img');
