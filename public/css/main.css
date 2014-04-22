@@ -24,7 +24,7 @@ body {
   position: absolute;
   left: 300px;
   top: 110px;
-  cursor: none; /* let windows do that ;) */
+  /*cursor: none; /* let windows do that ;) */
 }
 
 .xp-image {

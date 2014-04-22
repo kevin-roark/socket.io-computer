@@ -56,9 +56,10 @@ $(document).keydown(function(ev) {
 
   ev.preventDefault();
   var qemuKey = keymap.qemukey(ev.keyCode);
-  console.log(qemuKey);
-  if(qemuKey)
+  if(qemuKey) {
+    console.log(qemuKey);
     io.emit('keydown', qemuKey);
+  }
 });
 
 $(document).keyup(function(ev) {
@@ -71,12 +72,12 @@ $(document).keyup(function(ev) {
 $(document).mousemove(function(ev) {
   var rect = xp.get(0).getBoundingClientRect();
   if (!inRect(rect, ev)) {
-    keymap.updateMouse(rect);
     return;
   }
 
-  var delta = keymap.mousemove(ev.clientX, ev.clientY);
-  io.emit('mousemove', delta);
+  var pos = {x: ev.clientX, y: ev.clientY};
+
+  io.emit('mousemove', pos);
 });
 
 $(document).mousedown(function(ev) {

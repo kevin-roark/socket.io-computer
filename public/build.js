@@ -23,9 +23,6 @@ var shifting = module.exports.shifting = false;
 var ctrling = module.exports.ctrling = false;
 var alting = module.exports.alting = false;
 
-var lastx = module.exports.lastx = 0;
-var lasty = module.exports.lasty = 0;
-
 module.exports.blankState = '0'; // when a mouse is not pressed
 
 // maps javascript keycodes to qemu key names
@@ -124,16 +121,16 @@ var keymap = module.exports.keymap = {
 // returns the string to send to the qemu sendkey api from a javascript
 // key-event keycode.
 module.exports.qemukey = function(keycode) {
-  if (keycode == 16) {
-    shifting = true; return null;
-  } else if (keycode == 17) {
-    ctrling = true; return null;
-  } else if (keycode == 18) {
-    alting = true; return null;
-  }
-
   var mapping = keymap[keycode];
   if (!mapping) return null;
+
+  if (mapping == 'shift') {
+    shifting = true; return null;
+  } else if (mapping == 'ctrl') {
+    ctrling = true; return null;
+  } else if (mapping == 'alt') {
+    alting = true; return null;
+  }
 
   var prefix = '';
   if (shifting) prefix += 'shift-';
@@ -144,29 +141,15 @@ module.exports.qemukey = function(keycode) {
 }
 
 module.exports.keyup = function(keycode) {
-  if (keycode == 16) {
+  var mapping = keymap[keycode];
+
+  if (mapping == 'shift') {
     shifting = false;
-  } else if (keycode == 17) {
+  } else if (mapping == 'ctrl'){
     ctrling = false;
-  } else if (keycode == 18) {
+  } else if (mapping == 'alt') {
     alting = false;
   }
-}
-
-// takes clientX and clientY from mouse, updates mouse position, and returns delta
-module.exports.mousemove = function(x, y) {
-  var dx = x - lastx;
-  var dy = y - lasty;
-
-  lastx = x;
-  lasty = y;
-
-  return {dx: dx, dy: dy};
-}
-
-module.exports.updateMouse = function(rect) {
-  lastx = rect.x;
-  lasty = rect.y;
 }
 
 // takes a mouse click event and returns qemu state of mouse
@@ -238,9 +221,10 @@ $(document).keydown(function(ev) {
 
   ev.preventDefault();
   var qemuKey = keymap.qemukey(ev.keyCode);
-  console.log(qemuKey);
-  if(qemuKey)
+  if(qemuKey) {
+    console.log(qemuKey);
     io.emit('keydown', qemuKey);
+  }
 });
 
 $(document).keyup(function(ev) {
@@ -253,12 +237,12 @@ $(document).keyup(function(ev) {
 $(document).mousemove(function(ev) {
   var rect = xp.get(0).getBoundingClientRect();
   if (!inRect(rect, ev)) {
-    keymap.updateMouse(rect);
     return;
   }
 
-  var delta = keymap.mousemove(ev.clientX, ev.clientY);
-  io.emit('mousemove', delta);
+  var pos = {x: ev.clientX, y: ev.clientY};
+
+  io.emit('mousemove', pos);
 });
 
 $(document).mousedown(function(ev) {
