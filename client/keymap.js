@@ -69,6 +69,8 @@ var keymap = module.exports.keymap = {
   , 88: 'x'
   , 89: 'y'
   , 90: 'z'
+  , 91: 'ctrl' // left command
+  , 93: 'ctrl' // right command
   , 107: 'equal'
   , 109: 'minus'
   , 112: 'f1'
@@ -96,6 +98,7 @@ var keymap = module.exports.keymap = {
   , 220: 'backslash'
   , 221: 'bracket_right'
   , 222: '\''
+  , 224: 'ctrl' // command in firefox
 }
 
 // returns the string to send to the qemu sendkey api from a javascript
