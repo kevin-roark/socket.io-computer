@@ -7,8 +7,8 @@ var blobToImage = require('./blob');
 var xp = $('.xp-image');
 var imWidth = 320;
 var imHeight = 240;
-var chWidth = 442;
-var chHeight = 310;
+var chWidth = 438;
+var chHeight = 290;
 
 var natWidth, natHeight;
 
@@ -23,16 +23,16 @@ function resize() {
   if (wdiff > 0) {
     var left = wdiff / 2;
     $('#window-chrome').css('left', left + 'px');
-    $('#xp-window').css('left', (left + 60)  + 'px');
-    $('.turn-timer').css('left', (left + 50) + 'px');
+    $('#xp-window').css('left', (left + 55)  + 'px');
+    $('.turn-timer').css('left', (left + 45) + 'px');
   }
 
   var hdiff = $(window).height() - chHeight;
   if (hdiff > 0) {
     var top = hdiff / 3;
     $('#window-chrome').css('top', top + 'px');
-    $('#xp-window').css('top', (top + 20) + 'px');
-    $('.turn-timer').css('top', (top + 20 + chHeight) + 'px');
+    $('#xp-window').css('top', (top + 18) + 'px');
+    $('.turn-timer').css('top', (top + 18 + chHeight) + 'px');
   }
 }
 resize();
