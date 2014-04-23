@@ -9,6 +9,7 @@ var imWidth = 320;
 var imHeight = 240;
 var chWidth = 438;
 var chHeight = 290;
+var TURN_TIME = 15000;
 
 var natWidth, natHeight;
 
@@ -75,14 +76,20 @@ function giveTurn() {
   waitingForTurn = false;
   xp.removeClass('waiting');
   xp.addClass('focused');
-  if (turnInt)
+  if (turnInt) {
     clearInterval(turnInt);
-  $('.turn-timer').html('');
+    $('.turn-timer').html('');
+  }
+  waitingTimer('Your turn expires', TURN_TIME, false);
 }
 
 function removeTurn() {
   hasTurn = false;
   focused = false;
+  if (turnInt) {
+    clearInterval(turnInt);
+    $('.turn-timer').html('');
+  }
   xp.removeClass('focused');
 }
 
@@ -107,10 +114,14 @@ io.on('lose-turn', function() {
 });
 
 io.on('turn-ack', function(time) {
+  waitingTimer('Waiting for turn', time, true);
+});
+
+function waitingTimer(text, ms, dot) {
   var dots = '';
   turnInt = setInterval(function() {
-    time -= 1000;
-    var seconds = Math.floor(time / 1000);
+    ms -= 1000;
+    var seconds = Math.floor(ms / 1000);
     if (seconds <= 0) {
       clearInterval(turnInt);
       $('.turn-timer').html('');
@@ -120,10 +131,12 @@ io.on('turn-ack', function(time) {
       else
         dots = '';
 
-      $('.turn-timer').html('Waiting for turn in ~' + seconds + ' seconds' + dots);
+      var str = text + ' in ~' + seconds + ' seconds';
+      if (dot) str += dots;
+      $('.turn-timer').html(str);
     }
   }, 1000);
-});
+}
 
 $(document).keydown(function(ev) {
   if (!focused || !hasTurn) return;
@@ -183,7 +196,7 @@ $(document).mouseup(function(ev) {
 var image = $('#xp-window img');
 image.bind('contextmenu', function(e) {
   return false;
-}); 
+});
 
 var lastImage;
 io.on('frame', function(frame) {
