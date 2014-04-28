@@ -32,7 +32,7 @@ function resize() {
   if (hdiff > 0) {
     var top = hdiff / 3;
     $('#window-chrome').css('top', top + 'px');
-    $('#xp-window').css('top', (top + 30) + 'px');
+    $('#xp-window').css('top', (top + 33) + 'px');
     $('.turn-timer').css('top', (top + 30 + chHeight) + 'px');
   }
 }
@@ -76,6 +76,7 @@ function giveTurn() {
   waitingForTurn = false;
   xp.removeClass('waiting');
   xp.addClass('focused');
+  $('body').css('cursor', 'none');
   if (turnInt) {
     clearInterval(turnInt);
     $('.turn-timer').html('');
@@ -91,6 +92,7 @@ function removeTurn() {
     $('.turn-timer').html('');
   }
   xp.removeClass('focused');
+  $('body').css('cursor', 'default');
 }
 
 function getQemuPos(ev) {
@@ -157,12 +159,14 @@ $(document).keyup(function(ev) {
 });
 
 $(document).mousemove(function(ev) {
-  if (!focused || !hasTurn) return;
+  if (!hasTurn) return;
 
+  /*
   var rect = xp.get(0).getBoundingClientRect();
   if (!inRect(rect, ev)) {
     return;
   }
+  */
 
   if (!natWidth || !natHeight) {
     return;
@@ -173,9 +177,9 @@ $(document).mousemove(function(ev) {
 });
 
 $(document).mousedown(function(ev) {
-  if (!checkFocus(ev)) return;
-
-  console.log(ev);
+  //if (!checkFocus(ev)) return;
+  checkFocus(ev);
+  if (!hasTurn) return;
 
   ev.preventDefault();
 
@@ -185,7 +189,8 @@ $(document).mousedown(function(ev) {
 });
 
 $(document).mouseup(function(ev) {
-  if (!focused || !hasTurn) return;
+  //if (!focused || !hasTurn) return;
+  if(!hasTurn) return;
 
   ev.preventDefault();
 

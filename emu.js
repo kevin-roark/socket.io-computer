@@ -86,6 +86,7 @@ sub.on('message', function(channel, data) {
 
     var dx = x - curX;
     var dy = y - curY;
+    //console.log('move = ' + dx + ' || ' + dy);
     emu.mouse(dx, dy);
 
     curX = x;
