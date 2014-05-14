@@ -3,7 +3,6 @@ var browserify = require('browserify-middleware');
 var mustache = require('mustache-express');
 var express = require('express');
 var app = express();
-
 var redis = require('./redis').web();
 
 var port = process.env.COMPUTER_IO_WEB_PORT || 5000;
@@ -31,8 +30,11 @@ app.use(function(req, res, next){
 
 var url = process.env.COMPUTER_IO_URL || 'http://localhost:6001';
 app.get('/', function(req, res, next){
-  res.render('index.mustache', {
-    //img: image.toString('base64'),
-    io: url
+  redis.get('computer:frame', function(err, image){
+    if (err) return next(err);
+    res.render('index.mustache', {
+      img: image.toString('base64'),
+      io: url
+    });
   });
 });
