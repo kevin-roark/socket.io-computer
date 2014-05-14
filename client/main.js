@@ -18,26 +18,6 @@ var waitingForTurn = false;
 var hasTurn = false;
 var turnInt;
 
-$(window).resize(resize);
-function resize() {
-  var wdiff = $(window).width() - chWidth;
-  if (wdiff > 0) {
-    var left = wdiff / 2;
-    $('#window-chrome').css('left', left + 'px');
-    $('#xp-window').css('left', (left + 85)  + 'px');
-    $('.turn-timer').css('left', (left + 75) + 'px');
-  }
-
-  var hdiff = $(window).height() - chHeight;
-  if (hdiff > 0) {
-    var top = hdiff / 3;
-    $('#window-chrome').css('top', top + 'px');
-    $('#xp-window').css('top', (top + 33) + 'px');
-    $('.turn-timer').css('top', (top + 30 + chHeight) + 'px');
-  }
-}
-resize();
-
 function inRect(rect, ev) {
   var x = ev.clientX;
   var y = ev.clientY;

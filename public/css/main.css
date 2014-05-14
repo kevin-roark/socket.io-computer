@@ -11,28 +11,27 @@ body {
 }
 
 #window-chrome {
-  position: absolute;
-  left: 0px;
-  top: 0px;
+  display: none;
 }
 
 .chrome-image {
-  width: 655px;
-  height: 436px;
 }
 
 #xp-window {
-  position: absolute;
-  left: 300px;
-  top: 110px;
   /*cursor: none; /* let windows do that ;) */
+  background: url(/macbook.png) no-repeat center;
+  background-size: cover;
+  width: 660px;
+  height: 400px;
+  margin: auto;
+  margin-top: 10%;
+  text-align: center;
 }
 
 .xp-image {
   width: 480px;
-  height: 360px;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
+  height: 337px;
+  margin-top: 27px;
 }
 
 .focused {
