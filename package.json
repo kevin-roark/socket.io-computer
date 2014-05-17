@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/kevin-roark/socket.io-computer",
   "dependencies": {
-    "socket.io": "1.0.0-pre2",
-    "socket.io-client": "1.0.0-pre2",
+    "socket.io": "1.0.0-pre3",
+    "socket.io-client": "1.0.0-pre3",
     "jquery": "2.1.0",
     "express": "3.4.8",
     "redis": "0.10.1",
