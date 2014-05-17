@@ -33,7 +33,7 @@ app.get('/', function(req, res, next){
   redis.get('computer:frame', function(err, image){
     if (err) return next(err);
     res.render('index.mustache', {
-      img: image.toString('base64'),
+      img: image ? image.toString('base64') : '',
       io: url
     });
   });
