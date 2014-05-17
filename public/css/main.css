@@ -17,6 +17,12 @@ body {
 .chrome-image {
 }
 
+img {
+  user-drag: none;
+  -moz-user-drag: none;
+  -webkit-user-drag: none;
+}
+
 #xp-window {
   /*cursor: none; /* let windows do that ;) */
   background: url(/macbook.png) no-repeat center;
