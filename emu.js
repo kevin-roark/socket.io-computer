@@ -81,8 +81,8 @@ sub.on('message', function(channel, data) {
     emu.key(data.toString()); // data is a key for send_press
   } else if ('computer:mousemove' == channel) { // absolute x and y of client
     var split = data.toString().split(':');
-    var x = parseInt(split[0]);
-    var y = parseInt(split[1]);
+    var x = parseInt(split[0], 10);
+    var y = parseInt(split[1], 10);
 
     var dx = x - curX;
     var dy = y - curY;
