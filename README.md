@@ -7,6 +7,8 @@ controlling it.
 It works by running [qemu](http://wiki.qemu.org/Main_Page) on the
 server-side and streaming the image binary data to the browser.
 
+![](https://i.cloudup.com/jiFZCZ7C9X.png)
+
 ## Dependencies
 
 In order to run `socket.io-computer` you must have the following
