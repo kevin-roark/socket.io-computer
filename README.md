@@ -1,19 +1,49 @@
-socket.io-computer
-==================
 
-a collaborative virtual machine
+# socket.io-computer
 
-## External dependencies
-  * qemu
-  * vnc snapshot
+A collaborative virtual machine where players take turns in
+controlling it.
 
+It works by running [qemu](http://wiki.qemu.org/Main_Page) on the
+server-side and streaming the image binary data to the browser.
 
-## Creating an image
-`qemu-img create -f qcow2 winxp.img 3G`
+## Dependencies
 
-## Starting it with raw qemu
+In order to run `socket.io-computer` you must have the following
+dependenices installed:
+
+- `qemu`
+- `vncsnapshot`
+- `redis-server`
+
+On the mac, all of the above are available on [homebrew](http://brew.sh/).
+
+## How to run
+
+First you should create an image onto which you'll load (install) the
+operating system ISO. We'll call it for this example `winxp.img`.
+
+```bash
+$ qemu-img create -f qcow2 winxp.img 3G
+```
+
 `qemu- -m 256 -hda winxp.img -cdrom <iso_name> -monitor stdio -boot d`
 
+Then you can run the additional needed processes:
 
-## Starting the socket.io computer (THE REAL DEAL)
-`node app.js & node index.js & node emu.js &`
+```bash
+# web server
+$ node app.js
+
+# io server
+$ node io.js
+
+# emulator process
+$ COMPUTER_ISO=xp.iso COMPUTER_IMG=winxp.img node emu.js
+```
+
+Then point your browser to `http://localhost:5000`.
+
+## License
+
+MIT
