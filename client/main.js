@@ -1,3 +1,4 @@
+/*global config,URL*/
 
 var $ = require('jquery');
 var io = require('socket.io-client')(config.io);
