@@ -5,11 +5,13 @@
     <link rel="stylesheet" href="css/main.css" />
   </head>
   <body>
-    <div id="window-chrome">
-      <img class="chrome-image" src="macbook.png"/>
-    </div>
     <div id="xp-window">
-      <img draggable="false" class="xp-image" src="data:image/png;base64,{{img}}" />
+      {{#img}}
+      <img alt="XP" class="xp-image" src="data:image/png;base64,{{img}}" />
+      {{/img}}
+      {{^img}}
+      <img alt="XP" class="xp-image" src="/blank.gif" />
+      {{/img}}
     </div>
     <!--div class="turn-request">
       <div class="turn-request-button">
