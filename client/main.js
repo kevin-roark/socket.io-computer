@@ -180,7 +180,7 @@ $(document).mouseup(function(ev) {
 });
 
 var image = $('#xp-window img');
-image.bind('contextmenu', function(e) {
+image.bind('contextmenu', function(e){
   return false;
 });
 
