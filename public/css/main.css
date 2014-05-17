@@ -48,29 +48,6 @@ img {
   border-color: rgb(255, 255, 30);
 }
 
-.turn-request {
-  position: absolute;
-  top: 360px;
-  text-align: center;
-}
-
-.turn-request-button {
-  cursor: pointer;
-  width: 460px;
-  height: 80px;
-  line-height: 80px;
-  background-color: #eee;
-  border: 1px solid black;
-  color: black;
-  font-size: 3em;
-  font-weight: 100;
-  border-radius: 5px;
-}
-  .turn-request-button:hover, .turn-request-button:focus {
-    border: 1px solid #444;
-    color: #444;
-  }
-
 .turn-timer {
   font-size: 13px;
   color: #999;
