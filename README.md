@@ -29,8 +29,6 @@ operating system ISO. We'll call it for this example `winxp.img`.
 $ qemu-img create -f qcow2 winxp.img 3G
 ```
 
-`qemu- -m 256 -hda winxp.img -cdrom <iso_name> -monitor stdio -boot d`
-
 Then you can run the additional needed processes:
 
 ```bash
