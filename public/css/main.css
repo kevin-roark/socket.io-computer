@@ -51,5 +51,6 @@ img {
 .turn-timer {
   font-size: 13px;
   color: #999;
-  position: absolute;
+  padding: 10px 0;
+  text-align: center;
 }
