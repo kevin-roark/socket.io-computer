@@ -187,15 +187,14 @@ image.bind('contextmenu', function(e){
 var lastImage;
 io.on('frame', function(frame) {
   var src = blobToImage(frame);
-  if (src) {
-    if (lastImage && 'undefined' != typeof URL) {
-      URL.revokeObjectURL(lastImage);
-    }
-
-    image.attr('src', blobToImage(frame));
-    lastImage = image.attr('src');
-    getDimensions(image);
+  if (!src) return;
+  if (lastImage && 'undefined' != typeof URL) {
+    URL.revokeObjectURL(lastImage);
   }
+
+  image.attr('src', blobToImage(frame));
+  lastImage = image.attr('src');
+  getDimensions(image);
 });
 
 function getDimensions(im) {
