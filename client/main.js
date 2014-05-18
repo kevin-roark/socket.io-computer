@@ -127,7 +127,6 @@ $(document).keydown(function(ev) {
   ev.preventDefault();
   var qemuKey = keymap.qemukey(ev.keyCode);
   if(qemuKey) {
-    console.log(qemuKey);
     io.emit('keydown', qemuKey);
   }
 });
@@ -192,8 +191,8 @@ io.on('frame', function(frame) {
     URL.revokeObjectURL(lastImage);
   }
 
-  image.attr('src', blobToImage(frame));
-  lastImage = image.attr('src');
+  image[0].src = blobToImage(frame);
+  lastImage = image[0].src;
   getDimensions(image);
 });
 
