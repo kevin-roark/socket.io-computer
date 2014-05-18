@@ -44,6 +44,11 @@ io.total = 0;
 io.on('connection', function(socket) {
   var req = socket.request;
 
+  // in case user is reconneting send last known state
+  redis.get('computer:frame', function(err, image){
+    if (image) socket.emit('frame', image);
+  });
+
   // send keypress to emulator
   socket.on('keydown', function(key){
     redis.publish('computer:keydown', key);
@@ -66,9 +71,3 @@ io.on('connection', function(socket) {
   });
 
 });
-
-// socket broadcast shortcut
-function broadcast(socket/*, …*/){
-  var args = Array.prototype.slice.call(arguments, 1);
-  socket.broadcast.emit.apply(socket, args);
-}
