@@ -7,7 +7,7 @@ var spawn = require('child_process').spawn;
 var VNC = require('./vnc');
 
 var displayNum = process.env.COMPUTER_DISPLAY || '0';
-var port = 5900 + parseInt(displayNum);
+var port = 5900 + parseInt(displayNum, 10);
 var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1';
 var SS_NAME = 'ss.jpg';
 
@@ -35,9 +35,9 @@ Computer.prototype.init = function(img, iso) {
 
   var command = 'qemu-system-x86_64';
   var args = [
-    '-m', '512',
+    '-m', '1024',
     '-vnc', hostName + ':' + displayNum,
-    '-net', 'nic',
+    '-net', 'nic,model=rtl8139',
     '-net', 'user',
     '-hda', img,
     '-cdrom', iso,
@@ -66,7 +66,7 @@ Computer.prototype.run = function() {
 
   this.loop = setInterval(function() {
     frame();
-  }, 100);
+  }, 200);
 
   function frame() {
     self.vnc.getFrame(function(buf) {
@@ -104,7 +104,7 @@ Computer.prototype.click = function(state) {
   var command = 'mouse_button ' + state + '\n';
   console.log(command);
   this.qemu.stdin.write(command);
-}
+};
 
 Computer.prototype.key = function(key) {
   if (!this.running) return this;
