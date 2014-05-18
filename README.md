@@ -7,7 +7,7 @@ controlling it.
 It works by running [qemu](http://wiki.qemu.org/Main_Page) on the
 server-side and streaming the image binary data to the browser.
 
-![](https://i.cloudup.com/wpyr5L-Ctg.png)
+![](https://i.cloudup.com/eLzCA3vYK5.gif)
 
 ## Dependencies
 
