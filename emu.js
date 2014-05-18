@@ -2,6 +2,7 @@
 var fs = require('fs');
 var Computer = require('./computer');
 var join = require('path').join;
+var crypto = require('crypto');
 var debug = require('debug')('computer:worker');
 
 if (!process.env.COMPUTER_ISO) {
@@ -48,9 +49,15 @@ function load(){
     setTimeout(load, 1000);
   });
 
+  var lastHash;
+
   emu.on('frame', function(frame) {
+    if (!frame.length) return debug('ignore bogus frame');
+    var hash = checksum(frame);
+    if (hash == lastHash) return debug('ignore repeated frame');
     io.emit('frame', frame);
     redis.set('computer:frame', frame);
+    lastHash = hash;
   });
 
   console.log('init emu');
@@ -95,5 +102,9 @@ sub.on('message', function(channel, data) {
     emu.click(data.toString()); // data is mouse pressed code for mouse_button
   }
 });
+
+function checksum(str){
+  return crypto.createHash('md5').update(str).digest('hex');
+}
 
 load();
