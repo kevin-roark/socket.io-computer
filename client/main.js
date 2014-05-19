@@ -6,8 +6,8 @@ var keymap = require('./keymap');
 var blobToImage = require('./blob');
 
 var xp = $('.xp-image');
-var imWidth = 480;
-var imHeight = 360;
+var imWidth = parseInt(xp.width(), 10);
+var imHeight = parseInt(xp.height(), 10);
 var chWidth = 650;
 var chHeight = 440;
 var TURN_TIME = 15000;
@@ -20,30 +20,30 @@ var hasTurn = false;
 var turnInt;
 
 function inRect(rect, ev) {
-  var x = ev.clientX;
-  var y = ev.clientY;
-  var p = 175; // padding
-
-  if (x <= rect.left - p || x >= rect.right + p || y <= rect.top - p || y >= rect.bottom + p)
-    return false;
-  return true;
+  return ev.clientX > rect.left && ev.clientX < rect.right
+    && ev.clientY > rect.top && ev.clientY < rect.bottom;
 }
+
+var turnRequestPos;
+var buttonsState = 0;
 
 function checkFocus(ev) {
   var rect = xp.get(0).getBoundingClientRect();
   if (!focused && inRect(rect, ev)) {
 
+    var pos = getPos(ev);
+
     if(!hasTurn && !waitingForTurn) {
       waitingForTurn = true;
       io.emit('turn-request', new Date());
       xp.addClass('waiting');
+      turnRequestPos = pos;
       return focused;
     }
 
     focused =  true;
     xp.addClass('focused');
-    var pos = getQemuPos(ev);
-    io.emit('mousemove', pos);
+    io.emit('pointer', pos.x, pos.y, buttonsState);
   } else if (focused && !inRect(rect, ev)) {
     focused = false;
     xp.removeClass('focused');
@@ -63,6 +63,8 @@ function giveTurn() {
     $('.turn-timer').html('');
   }
   waitingTimer('Your turn expires', TURN_TIME, false);
+  var pos = turnRequestPos;
+  io.emit('pointer', pos.x, pos.y, buttonsState);
 }
 
 function removeTurn() {
@@ -76,16 +78,22 @@ function removeTurn() {
   $('body').css('cursor', 'default');
 }
 
-function getQemuPos(ev) {
+function getPos(ev) {
   var rect = xp.get(0).getBoundingClientRect();
 
   var x = ev.clientX - rect.left;
   var y = ev.clientY - rect.top;
 
-  x *= natWidth / imWidth;
-  y *= natHeight / imHeight;
+  //x *= natWidth / imWidth;
+  //y *= natHeight / imHeight;
 
-  return {x: x, y: y};
+  if (x < 0) x = 0;
+  if (y < 0) y = 0;
+  if (x > imWidth) x = imWidth;
+  if (y > imHeight) y = imHeight;
+
+  var pos = {x: Math.round(x / imWidth * natWidth), y: Math.round(y / imHeight * natHeight)};
+  return pos;
 }
 
 io.on('your-turn', function() {
@@ -141,19 +149,20 @@ $(document).keyup(function(ev) {
 $(document).mousemove(function(ev) {
   if (!hasTurn) return;
 
-  /*
   var rect = xp.get(0).getBoundingClientRect();
-  if (!inRect(rect, ev)) {
+  if (inRect(rect, ev)) {
+    $('body').css('cursor', 'none');
+  } else {
+    $('body').css('cursor', 'default');
     return;
   }
-  */
 
   if (!natWidth || !natHeight) {
     return;
   }
 
-  var pos = getQemuPos(ev);
-  io.emit('mousemove', pos);
+  var pos = getPos(ev);
+  io.emit('pointer', pos.x, pos.y, buttonsState);
 });
 
 $(document).mousedown(function(ev) {
@@ -163,9 +172,9 @@ $(document).mousedown(function(ev) {
 
   ev.preventDefault();
 
-  // start a click
-  var state = keymap.mouseclick(ev);
-  io.emit('mouseclick', state);
+  var pos = getPos(ev);
+  buttonsState |= getMouseMask(ev);
+  io.emit('pointer', pos.x, pos.y, buttonsState);
 });
 
 $(document).mouseup(function(ev) {
@@ -175,8 +184,25 @@ $(document).mouseup(function(ev) {
   ev.preventDefault();
 
   // click is finished
-  io.emit('mouseclick', keymap.blankState);
+  var pos = getPos(ev);
+  buttonsState ^= getMouseMask(ev);
+  io.emit('pointer', pos.x, pos.y, buttonsState);
 });
+
+function getMouseMask(ev){
+  var bmask;
+  // from novnc
+  if (ev.which) {
+    /* everything except IE */
+    bmask = 1 << ev.button;
+  } else {
+    /* IE including 9 */
+    bmask = (ev.button & 0x1) +      // Left
+            (ev.button & 0x2) * 2 +  // Right
+            (ev.button & 0x4) / 2;   // Middle
+  }
+  return bmask;
+}
 
 var image = $('#xp-window img');
 image.bind('contextmenu', function(e){

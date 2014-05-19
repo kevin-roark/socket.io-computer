@@ -54,15 +54,9 @@ io.on('connection', function(socket) {
     redis.publish('computer:keydown', key);
   });
 
-  // send mouse move to emulator
-  socket.on('mousemove', function(move) {
-    var mstr = move.x + ':' + move.y;
-    redis.publish('computer:mousemove', mstr);
-  });
-
-  // mouse click to emulator
-  socket.on('mouseclick', function(state) {
-    redis.publish('computer:click', state);
+  // pointer events
+  socket.on('pointer', function(x, y, state) {
+    redis.publish('computer:pointer', x + ':' + y + ':' + state);
   });
 
   socket.on('turn-request', function(time) {

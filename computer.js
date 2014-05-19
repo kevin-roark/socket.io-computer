@@ -39,6 +39,7 @@ Computer.prototype.init = function(img, iso) {
     '-vnc', hostName + ':' + displayNum,
     '-net', 'nic,model=rtl8139',
     '-net', 'user',
+    '-usbdevice', 'tablet',
     '-hda', img,
     '-cdrom', iso,
     '-monitor', 'stdio',
@@ -91,19 +92,9 @@ Computer.prototype.snapshot = function(name) {
   });
 };
 
-Computer.prototype.mouse = function(dx, dy) {
+Computer.prototype.pointer = function(x, y, state) {
   if (!this.running) return this;
-
-  var command = 'mouse_move ' + dx + ' ' + dy + '\n';
-  this.qemu.stdin.write(command);
-};
-
-Computer.prototype.click = function(state) {
-  if (!this.running) return this;
-
-  var command = 'mouse_button ' + state + '\n';
-  console.log(command);
-  this.qemu.stdin.write(command);
+  this.vnc.r.pointerEvent(x, y, state);
 };
 
 Computer.prototype.key = function(key) {

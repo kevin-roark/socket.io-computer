@@ -77,29 +77,22 @@ function load(){
 }
 
 // controlling
-var curX = 0;
-var curY = 0;
-
 sub.subscribe('computer:keydown');
-sub.subscribe('computer:mousemove');
-sub.subscribe('computer:click');
+sub.subscribe('computer:pointer');
+
 sub.on('message', function(channel, data) {
+  data = data.toString();
+
   if ('computer:keydown' == channel) {
-    emu.key(data.toString()); // data is a key for send_press
-  } else if ('computer:mousemove' == channel) { // absolute x and y of client
-    var split = data.toString().split(':');
+    // data is a key for send_press
+    emu.key(data, 0);
+  } else if ('computer:pointer' == channel) {
+    // absolute x and y of client
+    var split = data.split(':');
     var x = parseInt(split[0], 10);
     var y = parseInt(split[1], 10);
-
-    var dx = x - curX;
-    var dy = y - curY;
-    //console.log('move = ' + dx + ' || ' + dy);
-    emu.mouse(dx, dy);
-
-    curX = x;
-    curY = y;
-  } else if ('computer:click' == channel) {
-    emu.click(data.toString()); // data is mouse pressed code for mouse_button
+    var state = parseInt(split[2], 10);
+    emu.pointer(x, y, state);
   }
 });
 

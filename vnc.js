@@ -15,6 +15,11 @@ function VNC(host, port) {
   this.displayNum = port - 5900; // vnc convention
 
   this.command = 'vncsnapshot -quality 15 ' + this.host + ':' + this.displayNum + ' ' + SS_NAME;
+
+  this.r = rfb.createConnection({
+    host: host,
+    port: port
+  });
 }
 
 VNC.prototype.getFrame = function(callback) {
