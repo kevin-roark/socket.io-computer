@@ -26,8 +26,8 @@ img {
 #xp-window {
   /*cursor: none; /* let windows do that ;) */
   background: url(/macbook.png) no-repeat center;
-  background-size: cover;
-  width: 660px;
+  background-size: 100% 100%;
+  width: 600px;
   height: 400px;
   margin: auto;
   margin-top: 10%;
@@ -35,17 +35,21 @@ img {
 }
 
 .xp-image {
-  width: 480px;
-  height: 337px;
-  margin-top: 27px;
+  width: 440px;
+  height: 330px;
+  margin-top: 32px;
 }
 
 .focused {
-  border-color: rgb(30, 30, 255);
+  box-shadow: 0px 0px 9px 0px rgba(45, 213, 255, 0.75);
+  -moz-box-shadow: 0px 0px 9px 0px rgba(45, 213, 255, 0.75);
+  -webkit-box-shadow: 0px 0px 9px 0px rgba(45, 213, 255, 0.75);
 }
 
 .waiting {
-  border-color: rgb(255, 255, 30);
+  box-shadow: 0px 0px 9px 0px rgba(242, 255, 63, 0.75);
+  -moz-box-shadow: 0px 0px 9px 0px rgba(242, 255, 63, 0.75);
+  -webkit-box-shadow: 0px 0px 9px 0px rgba(242, 255, 63, 0.75);
 }
 
 .turn-timer {

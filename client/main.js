@@ -166,6 +166,8 @@ $(document).mousemove(function(ev) {
 });
 
 $(document).mousedown(function(ev) {
+  buttonsState |= getMouseMask(ev);
+
   //if (!checkFocus(ev)) return;
   checkFocus(ev);
   if (!hasTurn) return;
@@ -173,11 +175,12 @@ $(document).mousedown(function(ev) {
   ev.preventDefault();
 
   var pos = getPos(ev);
-  buttonsState |= getMouseMask(ev);
   io.emit('pointer', pos.x, pos.y, buttonsState);
 });
 
 $(document).mouseup(function(ev) {
+  buttonsState ^= getMouseMask(ev);
+
   //if (!focused || !hasTurn) return;
   if(!hasTurn) return;
 
@@ -185,7 +188,6 @@ $(document).mouseup(function(ev) {
 
   // click is finished
   var pos = getPos(ev);
-  buttonsState ^= getMouseMask(ev);
   io.emit('pointer', pos.x, pos.y, buttonsState);
 });
 
