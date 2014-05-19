@@ -57,7 +57,7 @@ function giveTurn() {
   waitingForTurn = false;
   xp.removeClass('waiting');
   xp.addClass('focused');
-  $('body').css('cursor', 'none');
+  $('body').css('cursor', 'crosshair');
   if (turnInt) {
     clearInterval(turnInt);
     $('.turn-timer').html('');
@@ -151,7 +151,7 @@ $(document).mousemove(function(ev) {
 
   var rect = xp.get(0).getBoundingClientRect();
   if (inRect(rect, ev)) {
-    $('body').css('cursor', 'none');
+    $('body').css('cursor', 'crosshair');
   } else {
     $('body').css('cursor', 'default');
     return;
