@@ -22,6 +22,7 @@ if ('development' == process.env.NODE_ENV) {
 app.use(express.static(__dirname + '/public'));
 
 app.use(function(req, res, next){
+  if (req.socket.listeners('error').length) return next();
   req.socket.on('error', function(err){
     console.error(err.stack);
   });

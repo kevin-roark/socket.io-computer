@@ -5,6 +5,7 @@ var fs = require('fs');
 var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
 var VNC = require('./vnc');
+var Canvas = require('canvas');
 
 var displayNum = process.env.COMPUTER_DISPLAY || '0';
 var port = 5900 + parseInt(displayNum, 10);
@@ -65,17 +66,13 @@ Computer.prototype.run = function() {
     return;
   }
 
-  this.loop = setInterval(function() {
-    frame();
-  }, 200);
+  this.vnc.on('copy', function(rect){
+    self.emit('copy', rect);
+  });
 
-  function frame() {
-    self.vnc.getFrame(function(buf) {
-      if (buf) {
-        self.emit('frame', buf);
-      }
-    });
-  }
+  this.vnc.on('frame', function(frame){
+    self.emit('frame', frame);
+  });
 
   this.running = true;
 };
@@ -101,6 +98,7 @@ Computer.prototype.key = function(key) {
   if (!this.running) return this;
 
   var command = 'sendkey ' + key + '\n';
+  if (!this.qemu.stdin.writable) return;
   this.qemu.stdin.write(command);
 };
 

@@ -7,12 +7,14 @@
   </head>
   <body>
     <div id="xp-window">
-      {{#img}}
-      <img alt="XP" class="xp-image" src="data:image/png;base64,{{img}}" />
-      {{/img}}
-      {{^img}}
-      <img alt="XP" class="xp-image" src="/blank.gif" />
-      {{/img}}
+      <div class="xp-image">
+        {{#img}}
+        <img alt="XP" src="data:image/png;base64,{{img}}" />
+        {{/img}}
+        {{^img}}
+        <img alt="XP" src="/blank.gif" />
+        {{/img}}
+      </div>
     </div>
     <div class="turn-timer"></div>
 

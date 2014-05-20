@@ -28,6 +28,7 @@
     "browserify-middleware": "2.5.0",
     "mustache-express": "1.0.1",
     "debug": "^0.8.0",
+    "jpeg": "https://github.com/yztaoj/node-jpeg/archive/master.tar.gz",
     "canvas": "~1.1.3",
     "rfb2": "0.0.9"
   }

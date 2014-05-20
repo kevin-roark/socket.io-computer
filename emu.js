@@ -52,12 +52,11 @@ function load(){
   var lastHash;
 
   emu.on('frame', function(frame) {
-    if (!frame.length) return debug('ignore bogus frame');
-    var hash = checksum(frame);
-    if (hash == lastHash) return debug('ignore repeated frame');
     io.emit('frame', frame);
-    redis.set('computer:frame', frame);
-    lastHash = hash;
+  });
+
+  emu.on('copy', function(rect) {
+    io.emit('copy', rect);
   });
 
   console.log('init emu');

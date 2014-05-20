@@ -1,7 +1,9 @@
 
 var Canvas = require('canvas');
+var Emitter = require('events').EventEmitter;
 var rfb = require('rfb2');
 var exec = require('child_process').exec;
+var Jpeg = require('jpeg').Jpeg;
 var fs = require('fs');
 
 var SS_NAME = 'ss.jpg';
@@ -20,108 +22,41 @@ function VNC(host, port) {
     host: host,
     port: port
   });
-}
-
-VNC.prototype.getFrame = function(callback) {
-   exec(this.command, function(error, stdout, stderr) {
-      if (error) {
-        console.log(stderr); callback(null); return;
-      }
-
-      fs.readFile(SS_NAME, function(err, buf) {
-        if (err) {
-          console.log('readfile error'); callback(null); return;
-        }
-
-        callback(buf);
-      });
-    });
-};
-
-/* Hide all of this for now, I think the drawing on canvas is too slow
-
-function VNC(host, port) {
-  try {
-    this.r = rfb.createConnection({
-      host: host,
-      port: port
-    });
-  } catch(e) {
-    throw new Error('cannot vnc connect');
-  }
 
   var self = this;
-
-  self.r.on('connect', function() {
-    // connected, woo!
-    self.width = self.r.width;
-    self.height = self.r.height;
-    self.canvas = new Canvas(self.width, self.height);
-    console.log(self.height);
-    console.log(self.width);
-    self.r.on('rect', function(rect) {
-      // got a frame
-      if (rect.width > self.width || rect.height > self.height) {
-        self.width = rect.width;
-        self.height = rect.height;
-        self.canvas = new Canvas(rect.width, rect.height);
-      }
-
-      self.rect = rect;
-      self.drawRect(rect);
-    });
-  });
+  this.r.on('rect', this.drawRect.bind(this));
 }
 
-// from ansi-vnc
-VNC.prototype.scaleFactor = function() {
-  var oldWidth = this.canvas.width;
-  var oldHeight = this.canvas.height;
-  var maxWidth = this.display.width;
-  var maxHeight = this.display.height;
-
-  var sf;
-  if (oldWidth > oldHeight) {
-    sf = maxWidth / oldWidth;
-  } else {
-    sf = maxHeight / oldHeight;
-  }
-  return sf;
-}
+VNC.prototype.__proto__ = Emitter.prototype;
 
 function putData(ctx, id, rect) {
   ctx.putImageData(id, rect.x, rect.y);
 }
 
 VNC.prototype.drawRect = function(rect) {
-  if (!this.canvas) return;
-
-  var ctx = this.canvas.getContext('2d');
-  if (rect.encoding == rfb.encodings.raw) {
-    var id = ctx.createImageData(rect.width, rect.height);
-    for (var i=0;i< id.data.length; i+=4) {
-      id.data[i] = rect.data[i+2];
-      id.data[i+1] = rect.data[i+1];
-      id.data[i+2] = rect.data[i];
-      id.data[i+3] = 255;
-    }
-
-    putData(ctx, id, rect);
-  } else if (rect.encoding == rfb.encodings.copyRect) {
-    var can = new Canvas(this.r.width, this.r.height);
-    ctx.drawImage(can, rect.src.x, rect.src.y, rect.src.width, rect.src.height, rect.width, rect.height, rect.x, rect.y);
-  }
-}
-
-VNC.prototype.getFrame = function(callback) {
-  if(!this.rect) {
-    callback(null); return;
+  var self = this;
+  if (rect.encoding != 0) {
+    return self.emit('copy', rect);
   }
 
-  this.canvas.toBuffer(function(err, buf) {
-    if (err) throw err;
-    callback(buf);
+  var date = new Date;
+  var rgb = new Buffer(rect.width * rect.height * 3);
+ 
+  for (var i = 0, o = 0; i < rect.data.length; i += 4) {
+    rgb[o++] = rect.data[i + 2];
+    rgb[o++] = rect.data[i + 1];
+    rgb[o++] = rect.data[i];
+  }
+
+  var self = this;
+  var image = new Jpeg(rgb, rect.width, rect.height, 'rgb');
+  image.encode(function(img, err){
+    if (img) self.emit('frame', {
+      x: rect.x,
+      y: rect.y,
+      width: rect.width,
+      height: rect.height,
+      image: img
+    });
   });
 };
-
-*/
