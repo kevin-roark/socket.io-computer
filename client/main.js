@@ -4,7 +4,7 @@ var $ = require('jquery');
 var io = require('socket.io-client')(config.io);
 var keymap = require('./keymap');
 var blobToImage = require('./blob');
-var EventEmitter = require('events').EventEmitter;
+var Queue = require('queue3');
 
 var xp = $('.xp-image');
 var imWidth = parseInt(xp.width(), 10);
@@ -218,54 +218,40 @@ var canvas;
 var ctx;
 
 var image = $('.xp-image img');
-var busy = 0;
-var fid = 0;
-var ready = new EventEmitter;
+var queue = new Queue({ concurrency: 1 });
 
 io.on('frame', function(frame) {
-  var id = ++fid;
+  queue.push(function(fn){
+    var src = blobToImage(frame.image);
+    if (!src) return;
 
-  var src = blobToImage(frame.image);
-  if (!src) return;
+    var img = document.createElement('img');
+    img.src = src;
+    img.onload = function(){
+      if (!replaced) {
+        canvas = document.createElement('canvas');
+        canvas.width = natWidth;
+        canvas.height = natHeight;
+        image.replaceWith(canvas);
+        ctx = canvas.getContext('2d');
+        replaced = true;
+      }
 
-  var img = document.createElement('img');
-  img.src = src;
-  busy++;
-  img.onload = function(){
-    if (!replaced) {
-      canvas = document.createElement('canvas');
-      canvas.width = natWidth;
-      canvas.height = natHeight;
-      image.replaceWith(canvas);
-      ctx = canvas.getContext('2d');
-      replaced = true;
-    }
+      ctx.drawImage(img, frame.x, frame.y);
 
-    ctx.drawImage(img, frame.x, frame.y);
+      if ('undefined' != typeof URL) {
+        URL.revokeObjectURL(src);
+      }
 
-    if ('undefined' != typeof URL) {
-      URL.revokeObjectURL(src);
-    }
-
-    ready.emit('frame ' + id);
-    busy--;
-  };
+      fn();
+    };
+  });
 });
 
 io.on('copy', function(rect){
-  var id = ++fid;
-
-  if (busy) {
-    ready.once('frame ' + (id - 1), function(){
-      process();
-    });
-  } else {
-    process();
-  }
-
-  function process(){
+  queue.push(function(fn){
     var imgData = ctx.getImageData(rect.src.x, rect.src.y, rect.width, rect.height);
     ctx.putImageData(imgData, rect.x, rect.y);
-    ready.emit('frame ' + id);
-  }
+    fn();
+  });
 });
