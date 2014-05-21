@@ -181,27 +181,29 @@ $(document).mousemove(function(ev) {
   io.emit('pointer', pos.x, pos.y, buttonsState);
 });
 
-var eventDown = 'ontouchstart' in document ? 'touchstart' : 'mousedown';
 
-$(document).bind(eventDown, function(ev) {
-  buttonsState |= getMouseMask(ev);
+if ('onmousedown' in window) {
+  $(document).mousedown(function(ev) {
+    buttonsState |= getMouseMask(ev);
 
-  //if (!checkFocus(ev)) return;
-  checkFocus(ev);
-  if (!hasTurn) return;
+    //if (!checkFocus(ev)) return;
+    checkFocus(ev);
+    if (!hasTurn) return;
 
-  ev.preventDefault();
+    ev.preventDefault();
 
-  var pos = getPos(ev);
-  io.emit('pointer', pos.x, pos.y, buttonsState);
-});
+    var pos = getPos(ev);
+    io.emit('pointer', pos.x, pos.y, buttonsState);
+  });
+}
 
-var eventUp = 'ontouchend' in document ? 'touchend' : 'mouseup';
+var eventUp = 'ontouchend' in document ? 'touchstart' : 'mouseup';
 
 $(document).bind(eventUp, function(ev) {
   buttonsState ^= getMouseMask(ev);
 
   //if (!focused || !hasTurn) return;
+  if ('ontouchend' in document) checkFocus(ev);
   if(!hasTurn) return;
 
   ev.preventDefault();
