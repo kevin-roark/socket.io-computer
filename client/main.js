@@ -220,7 +220,7 @@ var ctx;
 var image = $('.xp-image img');
 var queue = new Queue({ concurrency: 1 });
 
-io.on('frame', function(frame) {
+io.on('raw', function(frame) {
   queue.push(function(fn){
     var src = blobToImage(frame.image);
     if (!src) return;

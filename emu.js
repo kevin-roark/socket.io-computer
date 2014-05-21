@@ -49,10 +49,14 @@ function load(){
     setTimeout(load, 1000);
   });
 
-  var lastHash;
+  var state;
 
-  emu.on('frame', function(frame) {
-    io.emit('frame', frame);
+  emu.on('raw', function(frame) {
+    io.emit('raw', frame);
+  });
+
+  emu.on('frame', function(buf){
+    redis.set('computer:frame', buf);
   });
 
   emu.on('copy', function(rect) {

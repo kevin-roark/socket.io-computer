@@ -4,6 +4,7 @@ var Emitter = require('events').EventEmitter;
 var rfb = require('rfb2');
 var exec = require('child_process').exec;
 var Jpeg = require('jpeg').Jpeg;
+var FixedJpegStack = require('jpeg').FixedJpegStack;
 var fs = require('fs');
 
 var SS_NAME = 'ss.jpg';
@@ -34,9 +35,9 @@ function putData(ctx, id, rect) {
 }
 
 VNC.prototype.drawRect = function(rect) {
-  var self = this;
   if (rect.encoding != 0) {
-    return self.emit('copy', rect);
+    this.emit('copy', rect);
+    return;
   }
 
   var date = new Date;
@@ -51,12 +52,26 @@ VNC.prototype.drawRect = function(rect) {
   var self = this;
   var image = new Jpeg(rgb, rect.width, rect.height, 'rgb');
   image.encode(function(img, err){
-    if (img) self.emit('frame', {
+    if (img) self.emit('raw', {
       x: rect.x,
       y: rect.y,
       width: rect.width,
       height: rect.height,
       image: img
     });
+  });
+
+  if (!this.state) {
+    // first frame
+    this.width = rect.width;
+    this.height = rect.height;
+    this.state = new FixedJpegStack(this.width, this.height, 'rgb');
+    this.state.push(rgb, 0, 0, this.width, this.height);
+  } else {
+    this.state.push(rgb, rect.x, rect.y, rect.width, rect.height);
+  }
+
+  this.state.encode(function(img, err) {
+    if (img) self.emit('frame', img);
   });
 };

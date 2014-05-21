@@ -46,7 +46,7 @@ io.on('connection', function(socket) {
 
   // in case user is reconneting send last known state
   redis.get('computer:frame', function(err, image){
-    if (image) socket.emit('frame', {
+    if (image) socket.emit('raw', {
       width: 800,
       height: 600,
       x: 0,

@@ -70,6 +70,10 @@ Computer.prototype.run = function() {
     self.emit('copy', rect);
   });
 
+  this.vnc.on('raw', function(frame){
+    self.emit('raw', frame);
+  });
+
   this.vnc.on('frame', function(frame){
     self.emit('frame', frame);
   });
