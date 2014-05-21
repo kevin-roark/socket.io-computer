@@ -22,6 +22,13 @@ var hasTurn = false;
 var turnInt;
 
 function inRect(rect, ev) {
+  // iphone
+  if (ev.originalEvent) ev = ev.originalEvent;
+  if (null == ev.clientX) {
+    ev.clientX = ev.layerX;
+    ev.clientY = ev.layerY;
+  }
+
   return ev.clientX > rect.left && ev.clientX < rect.right
     && ev.clientY > rect.top && ev.clientY < rect.bottom;
 }
@@ -82,6 +89,13 @@ function removeTurn() {
 
 function getPos(ev) {
   var rect = xp.get(0).getBoundingClientRect();
+
+  // iphone
+  if (ev.originalEvent) ev = ev.originalEvent;
+  if (null == ev.clientX) {
+    ev.clientX = ev.layerX;
+    ev.clientY = ev.layerY;
+  }
 
   var x = ev.clientX - rect.left;
   var y = ev.clientY - rect.top;
@@ -167,7 +181,9 @@ $(document).mousemove(function(ev) {
   io.emit('pointer', pos.x, pos.y, buttonsState);
 });
 
-$(document).mousedown(function(ev) {
+var eventDown = 'ontouchstart' in document ? 'touchstart' : 'mousedown';
+
+$(document).bind(eventDown, function(ev) {
   buttonsState |= getMouseMask(ev);
 
   //if (!checkFocus(ev)) return;
@@ -180,7 +196,9 @@ $(document).mousedown(function(ev) {
   io.emit('pointer', pos.x, pos.y, buttonsState);
 });
 
-$(document).mouseup(function(ev) {
+var eventUp = 'ontouchend' in document ? 'touchend' : 'mouseup';
+
+$(document).bind(eventUp, function(ev) {
   buttonsState ^= getMouseMask(ev);
 
   //if (!focused || !hasTurn) return;
@@ -194,6 +212,8 @@ $(document).mouseup(function(ev) {
 });
 
 function getMouseMask(ev){
+  if ('ontouchstart' in document) return 2;
+
   var bmask;
   // from novnc
   if (ev.which) {
