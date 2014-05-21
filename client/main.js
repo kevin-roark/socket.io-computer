@@ -181,40 +181,43 @@ $(document).mousemove(function(ev) {
   io.emit('pointer', pos.x, pos.y, buttonsState);
 });
 
+var eventDown = 'ontouchstart' in document ? 'touchstart' : 'mousedown';
 
-if ('onmousedown' in window) {
-  $(document).mousedown(function(ev) {
-    buttonsState |= getMouseMask(ev);
+$(document).bind(eventDown, function(ev) {
+  buttonsState |= getMouseMask(ev);
 
-    //if (!checkFocus(ev)) return;
-    checkFocus(ev);
-    if (!hasTurn) return;
+  //if (!checkFocus(ev)) return;
+  checkFocus(ev);
+  if (!hasTurn) return;
+
+  ev.preventDefault();
+
+  var pos = getPos(ev);
+  io.emit('pointer', pos.x, pos.y, buttonsState);
+
+  if ('ontouchend' in document) {
+    buttonsState ^= getMouseMask(ev);
+    io.emit('pointer', pos.x, pos.y, buttonsState);
+  }
+});
+
+if ('onmouseup' in document) {
+  $(document).mouseup(function(ev) {
+    buttonsState ^= getMouseMask(ev);
+
+    //if (!focused || !hasTurn) return;
+    if(!hasTurn) return;
 
     ev.preventDefault();
 
+    // click is finished
     var pos = getPos(ev);
     io.emit('pointer', pos.x, pos.y, buttonsState);
   });
 }
 
-var eventUp = 'ontouchend' in document ? 'touchstart' : 'mouseup';
-
-$(document).bind(eventUp, function(ev) {
-  buttonsState ^= getMouseMask(ev);
-
-  //if (!focused || !hasTurn) return;
-  if ('ontouchend' in document) checkFocus(ev);
-  if(!hasTurn) return;
-
-  ev.preventDefault();
-
-  // click is finished
-  var pos = getPos(ev);
-  io.emit('pointer', pos.x, pos.y, buttonsState);
-});
-
 function getMouseMask(ev){
-  if ('ontouchstart' in document) return 2;
+  if ('ontouchstart' in document) return 1;
 
   var bmask;
   // from novnc
