@@ -65,5 +65,19 @@ img {
 @media only screen and (min-width : 320px) and (max-width : 480px), (max-width : 568px) {
   #xp-window {
     background: none;
+    height: auto;
+    width: auto;
+  }
+
+  .xp-image {
+    padding: 5px;
+    background: #000;
+  }
+
+  .xp-image, .xp-image img, .xp-image canvas {
+    width: 310px;
+    margin-top: 0;
+    height: 234px;
+    display: block;
   }
 }
