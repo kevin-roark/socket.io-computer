@@ -17,7 +17,8 @@ function VNC(host, port) {
   this.port = port;
   this.displayNum = port - 5900; // vnc convention
 
-  this.command = 'vncsnapshot -quality 15 ' + this.host + ':' + this.displayNum + ' ' + SS_NAME;
+  this.width = 800;
+  this.height = 600;
 
   this.r = rfb.createConnection({
     host: host,
@@ -63,10 +64,8 @@ VNC.prototype.drawRect = function(rect) {
 
   if (!this.state) {
     // first frame
-    this.width = rect.width;
-    this.height = rect.height;
     this.state = new FixedJpegStack(this.width, this.height, 'rgb');
-    this.state.push(rgb, 0, 0, this.width, this.height);
+    this.state.push(rgb, 0, 0, rect.width, rect.height);
   } else {
     this.state.push(rgb, rect.x, rect.y, rect.width, rect.height);
   }

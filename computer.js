@@ -21,14 +21,6 @@ function Computer() {
 
 Computer.prototype.__proto__ = Emitter.prototype;
 
-function onQemuData(computer, data) {
-  console.log('qemu data: ' + data);
-}
-
-function onQemuClose(computer, code) {
-  console.log('qemu closed with code: ' + code);
-}
-
 Computer.prototype.init = function(img, iso) {
   this.img = img;
   this.iso = iso;
@@ -47,11 +39,9 @@ Computer.prototype.init = function(img, iso) {
     '-boot', 'c'
   ];
   this.qemu = spawn(command, args);
-  this.qemu.on('data', function(data) {
-    onQemuData(self, data);
-  });
   this.qemu.on('close', function(code) {
-    onQemuClose(self, code);
+    self.running = false;
+    console.error(new Date + ' - qemu closed with code: ' + code);
   });
 };
 
@@ -100,9 +90,7 @@ Computer.prototype.pointer = function(x, y, state) {
 
 Computer.prototype.key = function(key) {
   if (!this.running) return this;
-
   var command = 'sendkey ' + key + '\n';
-  if (!this.qemu.stdin.writable) return;
   this.qemu.stdin.write(command);
 };
 
