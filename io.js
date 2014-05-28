@@ -20,26 +20,6 @@ var redis = require('./redis').io();
 var uid = process.env.COMPUTER_IO_SERVER_UID || port;
 debug('server uid %s', uid);
 
-var turnQueue = [];
-var activeTurn = false;
-
-function checkQueue(newReq) {
-  if (!activeTurn && turnQueue.length >= 1) {
-    activeTurn = true;
-    var sock = turnQueue.shift();
-    sock.emit('your-turn');
-    setTimeout(function() {
-      sock.emit('lose-turn');
-      activeTurn = false;
-      checkQueue(false);
-    }, TURN_TIME);
-  } else if (newReq) {
-    var time = turnQueue.length * TURN_TIME;
-    var sock = turnQueue[turnQueue.length - 1];
-    sock.emit('turn-ack', time);
-  }
-}
-
 io.total = 0;
 io.on('connection', function(socket) {
   var req = socket.request;
@@ -66,8 +46,8 @@ io.on('connection', function(socket) {
   });
 
   socket.on('turn-request', function(time) {
-    turnQueue.push(socket);
-    checkQueue(true);
+    console.log('request hey ' + socket.id);
+    redis.publish('computer:turn', socket.id);
   });
 
 });

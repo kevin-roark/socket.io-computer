@@ -4,6 +4,7 @@ var Computer = require('./computer');
 var join = require('path').join;
 var crypto = require('crypto');
 var debug = require('debug')('computer:worker');
+var turn = require('./turn');
 
 if (!process.env.COMPUTER_ISO) {
   console.log('You must specify the ENV variable `COMPUTER_ISO` ' +
@@ -96,6 +97,12 @@ sub.on('message', function(channel, data) {
     var y = parseInt(split[1], 10);
     var state = parseInt(split[2], 10);
     emu.pointer(x, y, state);
+  } else if ('computer:turn' == channel) {
+    // turn request (data is socket.id)
+    console.log('sup turn');
+    console.log(data);
+    turn.push(data);
+    turn.checkQueue(true);
   }
 });
 
