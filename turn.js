@@ -2,11 +2,14 @@ var turnQueue = [];
 var activeTurn = false;
 var redis = require('./redis').emu();
 
+var TURN_TIME = 15000;
+
 module.exports.push = function(sockid) {
   turnQueue.push(sockid);
 }
 
-module.exports.checkQueue = function(newReq) {
+module.exports.checkQueue = checkQueue;
+function checkQueue(newReq) {
   var io = require('socket.io-emitter')(redis, {key: 'xpemu'});
 
   if (!activeTurn && turnQueue.length >= 1) {

@@ -2,8 +2,6 @@
 var sio = require('socket.io');
 var debug = require('debug');
 
-var TURN_TIME = 15000;
-
 process.title = 'socket.io-computer-io';
 
 var port = process.env.COMPUTER_IO_PORT || 6001;
@@ -46,7 +44,6 @@ io.on('connection', function(socket) {
   });
 
   socket.on('turn-request', function(time) {
-    console.log('request hey ' + socket.id);
     redis.publish('computer:turn', socket.id);
   });
 

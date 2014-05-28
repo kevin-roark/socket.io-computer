@@ -83,6 +83,7 @@ function load(){
 // controlling
 sub.subscribe('computer:keydown');
 sub.subscribe('computer:pointer');
+sub.subscribe('computer:turn');
 
 sub.on('message', function(channel, data) {
   data = data.toString();
@@ -99,8 +100,6 @@ sub.on('message', function(channel, data) {
     emu.pointer(x, y, state);
   } else if ('computer:turn' == channel) {
     // turn request (data is socket.id)
-    console.log('sup turn');
-    console.log(data);
     turn.push(data);
     turn.checkQueue(true);
   }
