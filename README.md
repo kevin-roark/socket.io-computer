@@ -38,8 +38,11 @@ $ node app.js
 # io server
 $ node io.js
 
-# emulator process
-$ COMPUTER_ISO=xp.iso COMPUTER_IMG=winxp.img node emu.js
+# qemu instance
+$ COMPUTER_ISO=xp.iso COMPUTER_IMG=winxp.img node qemu.js
+
+# emulator communication process
+$ node emu.js
 ```
 
 Then point your browser to `http://localhost:5000`.

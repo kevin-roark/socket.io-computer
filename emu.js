@@ -1,22 +1,9 @@
 
 var fs = require('fs');
 var Computer = require('./computer');
-var join = require('path').join;
 var crypto = require('crypto');
 var debug = require('debug')('computer:worker');
 var turn = require('./turn');
-
-if (!process.env.COMPUTER_ISO) {
-  console.log('You must specify the ENV variable `COMPUTER_ISO` ' +
-      'to location of iso file to broadcast.');
-  process.exit(1);
-}
-
-if (!process.env.COMPUTER_IMG) {
-  console.log('Must specificy the ENV variable `COMPUTER_IMG` ' +
-    'to location of disk image to use');
-  process.exit(1);
-}
 
 process.title = 'socket.io-computer-emulator';
 
@@ -24,16 +11,6 @@ process.title = 'socket.io-computer-emulator';
 var redis = require('./redis').emu();
 var sub = require('./redis').emu();
 var io = require('socket.io-emitter')(redis, {key: 'xpemu'});
-
-// iso
-var iso = process.env.COMPUTER_ISO;
-if ('/' != iso[0]) iso = join(process.cwd(), iso);
-debug('iso %s', iso);
-
-// img
-var img = process.env.COMPUTER_IMG;
-if ('/' != img[0]) img = join(process.cwd(), img);
-debug('img %s', img);
 
 var saveInterval = null;
 
@@ -64,10 +41,8 @@ function load(){
     io.emit('copy', rect);
   });
 
-  console.log('init emu');
-  emu.init(img, iso);
   setTimeout(function() {
-    console.log('run emu');
+    console.log('running emu');
     emu.run();
   }, 2000);
 

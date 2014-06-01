@@ -3,14 +3,15 @@ var Emitter = require('events').EventEmitter;
 var sys = require('sys');
 var fs = require('fs');
 var exec = require('child_process').exec;
-var spawn = require('child_process').spawn;
 var VNC = require('./vnc');
 var Canvas = require('canvas');
+var debug = require('debug')('computer:computer');
+var net = require('net');
 
+var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1';
 var displayNum = process.env.COMPUTER_DISPLAY || '0';
 var port = 5900 + parseInt(displayNum, 10);
-var hostName = process.env.COMPUTER_VNC_HOST || '127.0.0.1';
-var SS_NAME = 'ss.jpg';
+var tcp = process.env.COMPUTER_TCP || '127.0.0.1:4444';
 
 module.exports = Computer;
 
@@ -21,29 +22,11 @@ function Computer() {
 
 Computer.prototype.__proto__ = Emitter.prototype;
 
-Computer.prototype.init = function(img, iso) {
-  this.img = img;
-  this.iso = iso;
-  var self = this;
-
-  var command = 'qemu-system-x86_64';
-  var args = [
-    '-m', '1024',
-    '-vnc', hostName + ':' + displayNum,
-    '-net', 'nic,model=rtl8139',
-    '-net', 'user',
-    '-usbdevice', 'tablet',
-    '-hda', img,
-    '-cdrom', iso,
-    '-monitor', 'stdio',
-    '-boot', 'c'
-  ];
-  this.qemu = spawn(command, args);
-  this.qemu.on('close', function(code) {
-    self.running = false;
-    console.error(new Date + ' - qemu closed with code: ' + code);
-  });
-};
+Computer.prototype.closed = function() {
+  this.running = false;
+  setTimeout(this.run, 100);
+  return;
+}
 
 Computer.prototype.run = function() {
   var self = this;
@@ -52,8 +35,20 @@ Computer.prototype.run = function() {
     this.vnc = new VNC(hostName, port);
   } catch(e) {
     console.log('connection error');
-    setTimeout(self.run, 100);
-    return;
+    return self.closed();
+  }
+
+  try {
+    var split = tcp.split(':');
+    var tcpHost = split[0];
+    var tcpPort = split[1];
+    this.tcp = net.connect({host: tcpHost, port: tcpPort});
+    this.tcp.on('end', function() {
+      return self.closed();
+    });
+  } catch(e) {
+    console.log('tcp connection error');
+    return self.closed();
   }
 
   this.vnc.on('copy', function(rect){
@@ -85,13 +80,18 @@ Computer.prototype.snapshot = function(name) {
 
 Computer.prototype.pointer = function(x, y, state) {
   if (!this.running) return this;
-  this.vnc.r.pointerEvent(x, y, state);
+  try {
+    this.vnc.r.pointerEvent(x, y, state);
+  } catch(e) {
+    debug('vnc error -- qemu probably down');
+    this.closed();
+  }
 };
 
 Computer.prototype.key = function(key) {
   if (!this.running) return this;
   var command = 'sendkey ' + key + '\n';
-  this.qemu.stdin.write(command);
+  this.tcpWrite(command);
 };
 
 Computer.prototype.destroy = function(){
@@ -100,3 +100,12 @@ Computer.prototype.destroy = function(){
   this.running = false;
   return this;
 };
+
+Computer.prototype.tcpWrite = function(command) {
+  try {
+    this.tcp.write(command);
+  } catch (e) {
+    debug('tcp error -- qemu probably down');
+    this.closed();
+  }
+}
