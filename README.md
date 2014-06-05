@@ -15,7 +15,6 @@ In order to run `socket.io-computer` you must have the following
 dependenices installed:
 
 - `qemu`
-- `vncsnapshot`
 - `redis-server`
 
 On the mac, all of the above are available on [homebrew](http://brew.sh/).
@@ -39,10 +38,10 @@ $ node app.js
 $ node io.js
 
 # qemu instance
-$ COMPUTER_ISO=xp.iso COMPUTER_IMG=winxp.img node qemu.js
+$ COMPUTER_ISO=winxp.iso COMPUTER_IMG=winxp.img node qemu.js
 
 # emulator communication process
-$ node emu.js
+$ COMPUTER_IMG=winxp.img node emu-runner.js
 ```
 
 Then point your browser to `http://localhost:5000`.

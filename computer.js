@@ -18,6 +18,7 @@ module.exports = Computer;
 function Computer() {
   if (!(this instanceof Computer)) return new Computer();
   this.running = false;
+  this.img = process.env.COMPUTER_IMG || null;
 }
 
 Computer.prototype.__proto__ = Emitter.prototype;
@@ -68,7 +69,7 @@ Computer.prototype.run = function() {
 
 // saves a snapshot of disk image to the given filename
 Computer.prototype.snapshot = function(name) {
-  if (!this.running) return;
+  if (!this.running || !this.img) return;
 
   var command = 'qemu-img create -f qcow2 -b' + this.img + ' ' + name;
   exec(command, function(error, stdout, stderr) {

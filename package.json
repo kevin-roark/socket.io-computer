@@ -31,6 +31,7 @@
     "socket.io": "1.0.0-pre4",
     "socket.io-client": "1.0.0-pre4",
     "socket.io-emitter": "0.1.0",
-    "socket.io-redis": "0.1.2"
+    "socket.io-redis": "0.1.2",
+    "forever-monitor": "~1.2.3"
   }
 }
