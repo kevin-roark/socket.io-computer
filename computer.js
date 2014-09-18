@@ -71,7 +71,7 @@ Computer.prototype.run = function() {
 Computer.prototype.snapshot = function(name) {
   if (!this.running || !this.img) return;
 
-  var command = 'qemu-img create -f qcow2 -b' + this.img + ' ' + name;
+  var command = 'qemu-img create -f qcow2 -b ' + this.img + ' ' + name;
   exec(command, function(error, stdout, stderr) {
     if (!error) {
       console.log('saved emu to ' + name);
