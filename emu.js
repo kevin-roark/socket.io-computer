@@ -80,7 +80,7 @@ sub.on('message', function(channel, data) {
   }
 });
 
-function checksum(str){
+function checksum(str) {
   return crypto.createHash('md5').update(str).digest('hex');
 }
 

@@ -11,7 +11,7 @@ function startEmu() {
     console.log('THE EMULATOR DIED');
     setTimeout(function() {
       startEmu();
-    }, 500);
+    }, 2000);
   });
 
   child.start();

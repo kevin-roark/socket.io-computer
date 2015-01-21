@@ -55,6 +55,6 @@ function init(img, iso) {
     debug(new Date + ' - qemu closed with code: ' + code);
     setTimeout(function() {
       init(img, iso);
-    }, 100);
+    }, 500);
   });
 };
