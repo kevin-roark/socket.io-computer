@@ -22,6 +22,12 @@ io.total = 0;
 io.on('connection', function(socket) {
   var req = socket.request;
 
+  // keep track of connected clients
+  updateClientCount(++io.total);
+  socket.on('disconnect', function() {
+    updateClientCount(--io.total);
+  });
+
   // in case user is reconneting send last known state
   redis.get('computer:frame', function(err, image) {
     if (image) socket.emit('raw', {
@@ -46,5 +52,8 @@ io.on('connection', function(socket) {
   socket.on('turn-request', function(time) {
     redis.publish('computer:turn', socket.id);
   });
-
 });
+
+function updateClientCount(total) {
+  redis.hset('computer:connections', uid, total);
+}

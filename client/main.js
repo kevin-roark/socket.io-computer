@@ -280,3 +280,8 @@ io.on('copy', function(rect){
     fn();
   });
 });
+
+io.on('connections', function(count) {
+  console.log('got connections: ' + count);
+  $('.count').text(count);
+});
