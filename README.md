@@ -12,7 +12,7 @@ server-side and streaming the image binary data to the browser.
 ## Dependencies
 
 In order to run `socket.io-computer` you must have the following
-dependenices installed:
+dependencies installed:
 
 - `qemu`
 - `redis-server`

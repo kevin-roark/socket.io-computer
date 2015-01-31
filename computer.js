@@ -27,7 +27,7 @@ Computer.prototype.closed = function() {
   this.running = false;
   setTimeout(this.run, 100);
   return;
-}
+};
 
 Computer.prototype.run = function() {
   var self = this;
@@ -109,4 +109,4 @@ Computer.prototype.tcpWrite = function(command) {
     debug('tcp error -- qemu probably down');
     this.closed();
   }
-}
+};
