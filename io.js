@@ -23,7 +23,7 @@ io.on('connection', function(socket) {
   var req = socket.request;
 
   // in case user is reconneting send last known state
-  redis.get('computer:frame', function(err, image){
+  redis.get('computer:frame', function(err, image) {
     if (image) socket.emit('raw', {
       width: 800,
       height: 600,
@@ -34,7 +34,7 @@ io.on('connection', function(socket) {
   });
 
   // send keypress to emulator
-  socket.on('keydown', function(key){
+  socket.on('keydown', function(key) {
     redis.publish('computer:keydown', key);
   });
 

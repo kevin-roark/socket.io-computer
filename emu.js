@@ -17,7 +17,7 @@ var saveInterval = null;
 // load computer emulator
 var emu;
 
-function load(){
+function load() {
   debug('loading emulator');
   emu = new Computer();
 
@@ -33,7 +33,7 @@ function load(){
     io.emit('raw', frame);
   });
 
-  emu.on('frame', function(buf){
+  emu.on('frame', function(buf) {
     redis.set('computer:frame', buf);
   });
 

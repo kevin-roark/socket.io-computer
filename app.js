@@ -21,17 +21,17 @@ if ('development' == process.env.NODE_ENV) {
 
 app.use(express.static(__dirname + '/public'));
 
-app.use(function(req, res, next){
+app.use(function(req, res, next) {
   if (req.socket.listeners('error').length) return next();
-  req.socket.on('error', function(err){
+  req.socket.on('error', function(err) {
     console.error(err.stack);
   });
   next();
 });
 
 var url = process.env.COMPUTER_IO_URL || 'http://localhost:6001';
-app.get('/', function(req, res, next){
-  redis.get('computer:frame', function(err, image){
+app.get('/', function(req, res, next) {
+  redis.get('computer:frame', function(err, image) {
     if (err) return next(err);
     res.render('index.mustache', {
       img: image ? image.toString('base64') : '',
