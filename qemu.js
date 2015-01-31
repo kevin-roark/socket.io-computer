@@ -57,4 +57,4 @@ function init(img, iso) {
       init(img, iso);
     }, 500);
   });
-};
+}
