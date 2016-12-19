@@ -65,6 +65,7 @@ sub.on('message', function(channel, data) {
 
   if ('computer:keydown' == channel) {
     // data is a key for send_press
+    data=data.replace(/[^a-z0-9_\-]/g, "");
     emu.key(data, 0);
   } else if ('computer:pointer' == channel) {
     // absolute x and y of client
