@@ -41,15 +41,18 @@ io.on('connection', function(socket) {
 
   // send keypress to emulator
   socket.on('keydown', function(key) {
-    redis.publish('computer:keydown', key);
+	// Include the socket ID with the command
+    redis.publish('computer:keydown', socket.id + "|" + key);
   });
 
   // pointer events
   socket.on('pointer', function(x, y, state) {
-    redis.publish('computer:pointer', x + ':' + y + ':' + state);
+	// Include the socket ID with the command
+    redis.publish('computer:pointer', socket.id + "|" + x + ':' + y + ':' + state);
   });
 
   socket.on('turn-request', function(time) {
+	// The time parameter is completely useless
     redis.publish('computer:turn', socket.id);
   });
 });
