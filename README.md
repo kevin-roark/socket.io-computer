@@ -1,6 +1,12 @@
 
 # socket.io-computer
 
+**WARNING: YOU WILL BE HACKED IF YOU RUN THIS, IF YOU CAN EVEN GET IT TO RUN. DO NOT RUN THIS ON ANY COMPUTER YOU TRUST, AS IT HAS MULTIPLE VULNERABILITIES THAT ALLOW REMOTE USERS TO:**
+
+- Run shell commands as whatever user you run the server as
+- Access any files on your filesystem
+- Et cetera.
+
 A collaborative virtual machine where players take turns in
 controlling it.
 
