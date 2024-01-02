@@ -9,6 +9,11 @@ server-side and streaming the image binary data to the browser.
 
 ![](https://i.cloudup.com/eLzCA3vYK5.gif)
 
+**WARNING: YOU WILL BE HACKED IF YOU RUN THIS, IF YOU CAN EVEN GET IT TO RUN. DO NOT RUN THIS ON ANY COMPUTER YOU TRUST, AS IT HAS MULTIPLE VULNERABILITIES THAT ALLOW REMOTE USERS TO:**
+- Run shell commands as whatever user you run the server as
+- Access any files on your filesystem
+- Et cetera.
+
 ## Dependencies
 
 In order to run `socket.io-computer` you must have the following
